@@ -1,0 +1,83 @@
+﻿route_id,organization_name,is_operator
+riga_bus_2,"7 AP",1
+riga_bus_3,"6,7 AP",1
+riga_bus_4,"6 AP",1
+riga_bus_6,"7 AP",1
+riga_bus_7,"6 AP",1
+riga_bus_8,"6 AP",1
+riga_bus_9,"7 AP",1
+riga_bus_10,"6 AP",1
+riga_bus_11,"7 AP",1
+riga_bus_12,"7 AP",1
+riga_bus_13,"6,7 AP",1
+riga_bus_15,"7 AP",1
+riga_bus_16,"7 AP",1
+riga_bus_18,"7 AP",1
+riga_bus_20,"7 AP",1
+riga_bus_21,"6 AP",1
+riga_bus_22,"7 AP",1
+riga_bus_23,"7 AP",1
+riga_bus_24,"7 AP",1
+riga_bus_25,"7 AP",1
+riga_bus_26,"7 AP",1
+riga_bus_28,"7 AP",1
+riga_bus_29,"7 AP",1
+riga_bus_30,"6 AP",1
+riga_bus_31,"7 AP",1
+riga_bus_32,"6 AP",1
+riga_bus_33,"7 AP",1
+riga_bus_34,"7 AP",1
+riga_bus_36,"6 AP",1
+riga_bus_37,"6 AP",1
+riga_bus_38,"6 AP",1
+riga_bus_39,"6 AP",1
+riga_bus_41,"6 AP",1
+riga_bus_43,"6 AP",1
+riga_bus_44,"7 AP",1
+riga_bus_46,"6 AP",1
+riga_bus_47,"7 AP",1
+riga_bus_48,"7 AP",1
+riga_bus_49,"7 AP",1
+riga_bus_50,"7 AP",1
+riga_bus_51,"7 AP",1
+riga_bus_52,"7 AP",1
+riga_bus_53,"6 AP",1
+riga_bus_54,"6 AP",1
+riga_bus_55,"7 AP",1
+riga_bus_56,"6 AP",1
+riga_bus_57,"7 AP",1
+riga_bus_58,"7 AP",1
+riga_bus_60,"7 AP",1
+riga_bus_63,"6,7 AP",1
+riga_bus_99,"6,7 AP",1
+riga_tram_1,"3, 5 TD",1
+riga_tram_5,"3 TD",1
+riga_tram_7,"3, 5 TD",1
+riga_tram_8,"3 TD",1
+riga_tram_10,"3 TD",1
+riga_tram_11,"3, 5 TD",1
+riga_tram_14,"5 TD",1
+riga_tram_99,"3, 5 TD",1
+riga_trol_1,"1 TP",1
+riga_trol_3,"1 TP",1
+riga_trol_4,"1, 2 TP",1
+riga_trol_5,"1 TP",1
+riga_trol_9,"2 TP",1
+riga_trol_11,"1 TP",1
+riga_trol_12,"1, 2 TP",1
+riga_trol_13,"1 TP",1
+riga_trol_14,"2 TP",1
+riga_trol_15,"1 TP",1
+riga_trol_16,"1 TP",1
+riga_trol_17,"2 TP",1
+riga_trol_18,"2 TP",1
+riga_trol_19,"1, 2 TP",1
+riga_trol_20,"1 TP",1
+riga_trol_22,"1 TP",1
+riga_trol_23,"2 TP",1
+riga_trol_25,"2 TP",1
+riga_trol_27,"2 TP",1
+riga_trol_31,"2 TP",1
+riga_trol_34,"1 TP",1
+riga_trol_35,"2 TP",1
+riga_trol_99,"1, 2 TP",1

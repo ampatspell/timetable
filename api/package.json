@@ -1,0 +1,23 @@
+{
+  "name": "api",
+  "private": true,
+  "scripts": {
+    "start": " tsc && node ./dist",
+    "dev": "nodemon --watch src -e ts,js --exec 'npm run start'"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/koa": "^3.0.1",
+    "@types/node": "^25.2.3",
+    "nodemon": "^3.1.7",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@koa/router": "^15.3.0",
+    "csv-parse": "^6.1.0",
+    "gtfs-realtime-bindings": "^1.1.1",
+    "koa": "^3.1.1",
+    "date-fns": "^4.1.0",
+    "@date-fns/tz": "^1.4.1"
+  }
+}
