@@ -2,8 +2,9 @@
   "name": "api",
   "private": true,
   "scripts": {
-    "start": " tsc && node ./dist",
-    "dev": "nodemon --watch src -e ts,js --exec 'npm run start'"
+    "start": "tsc && node ./dist",
+    "dev": "nodemon --watch src -e ts,js --exec 'npm run start'",
+    "build": "tsc"
   },
   "type": "module",
   "devDependencies": {

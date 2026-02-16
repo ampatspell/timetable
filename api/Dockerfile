@@ -27,7 +27,7 @@ ENV HOST=0.0.0.0
 
 EXPOSE 3000
 
-CMD ["node", "/app/dist/index.js"]
+CMD ["node", "/app/dist"]
 
 HEALTHCHECK \
   --interval=1m \
