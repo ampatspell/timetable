@@ -16,7 +16,21 @@ router.get('/', async (ctx) => {
     now: new TZDate(new Date(), 'Europe/Riga')
   });
 
-  ctx.body = { weather, timetable };
+  const lines = [
+    weather.temperature.value,
+    weather.temperature.description?.long ?? '',
+    weather.wind.speed,
+    weather.wind.direction,
+    ...(timetable.map(entry => {
+      return [entry.time, entry.delay];
+    })).flat(),
+    '',
+    '---',
+    '',
+    JSON.stringify({ weather, timetable }, null, 2),
+  ].join('\n');
+
+  ctx.body = lines;
 });
 
 router.get('/health', async (ctx) => {
