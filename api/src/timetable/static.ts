@@ -1,7 +1,9 @@
 import { addDays, differenceInSeconds, format, getDay, parse, startOfDay } from "date-fns";
 import { TZDate } from "@date-fns/tz";
 import { sortedBy } from "../utils.js";
-import { loadParsedStaticData, ParsedStaticData } from "./data.js";
+import { ParsedStaticData } from "./data.js";
+
+// https://saraksti.rigassatiksme.lv/gtfs.zip
 
 const weekdays = ['sunday', 'monday', 'tuesday',  'wednesday', 'thursday', 'friday', 'saturday'] as const;
 

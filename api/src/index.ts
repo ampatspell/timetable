@@ -24,10 +24,6 @@ router.get('/', async (ctx) => {
     ...(timetable.map(entry => {
       return [entry.time, entry.delay];
     })).flat(),
-    '',
-    '---',
-    '',
-    JSON.stringify({ weather, timetable }, null, 2),
   ].join('\n');
 
   ctx.body = lines;
