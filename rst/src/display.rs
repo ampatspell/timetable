@@ -59,7 +59,7 @@ async fn display_task(
     let mut display = create_display(spi, rst, dc, cs);
     display.clear(Rgb565::BLACK).ok();
 
-    let position = Point::new(10, 25);
+    let position = Point::new(20, 50);
     let style = MonoTextStyle::new(&FONT_9X18_BOLD, Rgb565::WHITE);
 
     Timer::after(Duration::from_secs(5)).await;
