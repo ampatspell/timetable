@@ -11,7 +11,7 @@ use defmt::info;
 use embassy_executor::Spawner;
 use rst::{
     configure::{configure, configure_network},
-    display::configure_display,
+    display::{ConfigureDisplayOptions, configure_display},
 };
 
 #[panic_handler]
@@ -32,6 +32,12 @@ async fn main(spawner: Spawner) {
     info!("Hello");
     let (mut backlight, wifi, spi, dc, cs, rst) = configure();
     backlight.set_high();
-    configure_display(&spawner, spi, rst, dc, cs);
+    configure_display(ConfigureDisplayOptions {
+        spawner: &spawner,
+        spi,
+        rst,
+        dc,
+        cs,
+    });
     configure_network(&spawner, wifi).await;
 }
