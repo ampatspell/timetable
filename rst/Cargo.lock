@@ -1765,6 +1765,7 @@ dependencies = [
  "num-traits",
  "reqwless",
  "rtt-target",
+ "ryu",
  "smoltcp",
  "static_cell",
 ]

@@ -10,12 +10,14 @@
 use defmt::info;
 use embassy_executor::Spawner;
 use rst::{
-    configure::{configure, configure_network},
+    configure::{ConfigureResponse, configure},
     display::{ConfigureDisplayOptions, configure_display},
+    network::{ConfigureNetworkOptions, configure_network},
 };
 
 #[panic_handler]
-fn panic(_: &core::panic::PanicInfo) -> ! {
+fn panic(info: &core::panic::PanicInfo) -> ! {
+    info!("{}", info);
     loop {}
 }
 
@@ -30,14 +32,28 @@ esp_bootloader_esp_idf::esp_app_desc!();
 #[esp_rtos::main]
 async fn main(spawner: Spawner) {
     info!("Hello");
-    let (mut backlight, wifi, spi, dc, cs, rst) = configure();
-    backlight.set_high();
+
+    let ConfigureResponse {
+        backlight,
+        cs,
+        dc,
+        rst,
+        spi,
+        wifi,
+    } = configure();
+
     configure_display(ConfigureDisplayOptions {
         spawner: &spawner,
         spi,
         rst,
         dc,
         cs,
+        backlight,
     });
-    configure_network(&spawner, wifi).await;
+
+    configure_network(ConfigureNetworkOptions {
+        spawner: &spawner,
+        wifi,
+    })
+    .await;
 }
