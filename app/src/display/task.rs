@@ -15,9 +15,6 @@ use crate::{
     display::create::{CreateDisplayOptions, create_display},
 };
 
-// #define LCD_WIDTH 240
-// #define LCD_HEIGHT 280
-
 pub struct DisplayTaskOptions {
     pub spi: Spi<'static, Blocking>,
     pub rst: Output<'static>,
@@ -45,10 +42,10 @@ pub async fn display_task(opts: DisplayTaskOptions) {
         backlight.set_high();
     };
 
+    Timer::after(Duration::from_secs(1)).await;
+
     let position = Point::new(40, 30);
     let style = MonoTextStyle::new(&FONT_9X18_BOLD, Rgb565::WHITE);
-
-    Timer::after(Duration::from_secs(5)).await;
 
     Text::new("Connecting…", position, style)
         .draw(&mut display)
@@ -66,7 +63,7 @@ pub async fn display_task(opts: DisplayTaskOptions) {
         let mut st = str32::from(temperature);
         st.push_str("°C");
 
-        display.clear(Rgb565::BLACK).ok();
+        display.clear(Rgb565::RED).ok();
         Text::new(&st, position, style).draw(&mut display).ok();
     }
 }
