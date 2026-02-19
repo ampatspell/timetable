@@ -6,3 +6,5 @@ edition = "2024"
 [dependencies]
 embedded-graphics = "0.8.2"
 embedded-graphics-simulator = "0.8.0"
+embedded-canvas = "0.3.2"
+# app = { path = "../app" }
