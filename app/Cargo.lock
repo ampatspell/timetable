@@ -15,6 +15,38 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5f0e0fee31ef5ed1ba1316088939cea399010ed7731dba877ed44aeb407a75ea"
 
 [[package]]
+name = "app"
+version = "0.1.0"
+dependencies = [
+ "byte-slice-cast",
+ "critical-section",
+ "defmt 1.0.1",
+ "display-interface",
+ "embassy-executor",
+ "embassy-net",
+ "embassy-sync 0.7.2",
+ "embassy-time",
+ "embedded-graphics",
+ "embedded-graphics-core",
+ "embedded-hal-bus",
+ "embedded-io 0.7.1",
+ "embedded-io-async 0.7.0",
+ "esp-alloc",
+ "esp-bootloader-esp-idf",
+ "esp-hal",
+ "esp-radio",
+ "esp-rtos",
+ "mipidsi",
+ "no_std_strings",
+ "num-traits",
+ "reqwless",
+ "rtt-target",
+ "ryu",
+ "smoltcp",
+ "static_cell",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1736,38 +1768,6 @@ dependencies = [
  "libc",
  "rustversion",
  "svgbobdoc",
-]
-
-[[package]]
-name = "rst"
-version = "0.1.0"
-dependencies = [
- "byte-slice-cast",
- "critical-section",
- "defmt 1.0.1",
- "display-interface",
- "embassy-executor",
- "embassy-net",
- "embassy-sync 0.7.2",
- "embassy-time",
- "embedded-graphics",
- "embedded-graphics-core",
- "embedded-hal-bus",
- "embedded-io 0.7.1",
- "embedded-io-async 0.7.0",
- "esp-alloc",
- "esp-bootloader-esp-idf",
- "esp-hal",
- "esp-radio",
- "esp-rtos",
- "mipidsi",
- "no_std_strings",
- "num-traits",
- "reqwless",
- "rtt-target",
- "ryu",
- "smoltcp",
- "static_cell",
 ]
 
 [[package]]

@@ -7,13 +7,13 @@
 )]
 #![deny(clippy::large_stack_frames)]
 
-use defmt::info;
-use embassy_executor::Spawner;
-use rst::{
+use app::{
     configure::{ConfigureResponse, configure},
     display::{ConfigureDisplayOptions, configure_display},
     network::{ConfigureNetworkOptions, configure_network},
 };
+use defmt::info;
+use embassy_executor::Spawner;
 
 #[panic_handler]
 fn panic(info: &core::panic::PanicInfo) -> ! {

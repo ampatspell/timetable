@@ -1,11 +1,11 @@
 [package]
 edition      = "2024"
-name         = "rst"
+name         = "app"
 rust-version = "1.88"
 version      = "0.1.0"
 
 [[bin]]
-name = "rst"
+name = "app"
 path = "./src/main.rs"
 
 [dependencies]
