@@ -4,7 +4,7 @@ use mipidsi::{
     Builder, Display,
     interface::SpiInterface,
     models::ST7789,
-    options::{Orientation, Rotation},
+    options::{ColorInversion, Orientation, Rotation},
 };
 
 static BUFFER: static_cell::StaticCell<[u8; 512]> = static_cell::StaticCell::new();
@@ -34,6 +34,7 @@ pub fn create_display(
     let di = SpiInterface::new(spi_device, dc, buffer);
     let display = Builder::new(ST7789, di)
         .reset_pin(rst)
+        .invert_colors(ColorInversion::Inverted)
         .init(&mut delay)
         .unwrap();
 
