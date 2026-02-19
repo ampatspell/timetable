@@ -8,7 +8,7 @@ use embedded_graphics::{
     text::Text,
 };
 use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
-use no_std_strings::str32;
+use ui::draw::draw_content;
 
 use crate::{
     channel::{CHANNEL, Messages},
@@ -53,17 +53,9 @@ pub async fn display_task(opts: DisplayTaskOptions) {
 
     loop {
         let message = CHANNEL.receive().await;
-
         let payload = match message {
             Messages::Update { payload } => payload,
         };
-
-        let mut buffer = ryu::Buffer::new();
-        let temperature = buffer.format(payload.weather.temperature.value);
-        let mut st = str32::from(temperature);
-        st.push_str("°C");
-
-        display.clear(Rgb565::RED).ok();
-        Text::new(&st, position, style).draw(&mut display).ok();
+        draw_content(&mut display, payload);
     }
 }

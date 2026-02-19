@@ -1,6 +1,5 @@
 use no_std_strings::str128;
-
-use crate::channel::{Payload, Temperature, Tram, Weather, Wind};
+use ui::payload::{Payload, Temperature, Tram, Weather, Wind};
 
 pub fn parse(body: &str) -> Payload {
     let mut iter = body.split('\n').into_iter();
