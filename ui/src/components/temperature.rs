@@ -13,40 +13,6 @@ pub struct WeatherOptions<'a> {
     pub origin: Point,
 }
 
-pub fn draw_temperature_value<D>(display: &mut D, opts: WeatherOptions) -> ()
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
-    let string = float_to_string(opts.temperature.value);
-    {
-        let mut string = string;
-        string.push_str(" C");
-    }
-
-    draw_text(
-        display,
-        TextOptions {
-            origin: opts.origin,
-            string: &string,
-            font: &PROFONT_18_POINT,
-        },
-    );
-}
-
-pub fn draw_temperature_description<D>(display: &mut D, opts: WeatherOptions) -> ()
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
-    draw_text(
-        display,
-        TextOptions {
-            origin: opts.origin,
-            string: &opts.temperature.description,
-            font: &profont::PROFONT_14_POINT,
-        },
-    );
-}
-
 pub fn draw_weather<D>(display: &mut D, opts: WeatherOptions) -> ()
 where
     D: DrawTarget<Color = Rgb565> + Dimensions,
@@ -56,18 +22,27 @@ where
         origin,
     } = opts;
 
-    draw_temperature_value(
+    let string = float_to_string(temperature.value);
+    {
+        let mut string = string;
+        string.push_str(" C");
+    }
+
+    draw_text(
         display,
-        WeatherOptions {
-            temperature: &temperature,
+        TextOptions {
             origin: origin.add(Point::new(0, 0)),
+            string: &string,
+            font: &PROFONT_18_POINT,
         },
     );
-    draw_temperature_description(
+
+    draw_text(
         display,
-        WeatherOptions {
-            temperature: &temperature,
+        TextOptions {
             origin: origin.add(Point::new(0, 15)),
+            string: &temperature.description,
+            font: &profont::PROFONT_14_POINT,
         },
     );
 }
