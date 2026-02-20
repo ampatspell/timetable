@@ -1,6 +1,7 @@
 use crate::{
     components::{
         BACKGROUND_COLOR,
+        schedule::{ScheduleOptions, draw_schedule},
         temperature::{WeatherOptions, draw_weather},
     },
     payload::Payload,
@@ -22,6 +23,14 @@ where
         WeatherOptions {
             temperature: &payload.weather.temperature,
             origin: Point::new(40, 40),
+        },
+    );
+
+    draw_schedule(
+        display,
+        ScheduleOptions {
+            trams: &payload.trams,
+            origin: Point::new(40, 80),
         },
     );
 }
