@@ -54,8 +54,8 @@ where
 
         // °
         {
-            let width: i32 = sign32(bounding_box.size.width);
-            let height: i32 = sign32(bounding_box.size.height);
+            let width = sign32(bounding_box.size.width);
+            let height = sign32(bounding_box.size.height);
             let origin = Point::new(bounding_box.top_left.x + width + 2, origin.y - height + 6);
 
             Circle::new(origin, 7)
