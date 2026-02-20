@@ -29,7 +29,8 @@ where
         },
     );
 
-    draw_horizontal_line(display, 0, WIDTH, HEIGHT / 2);
+    // 240px width is not real, height also
+    draw_horizontal_line(display, 0, WIDTH + 50, HEIGHT / 2);
 
     draw_schedule(
         display,
