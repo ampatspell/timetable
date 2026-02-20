@@ -57,6 +57,7 @@ where
             let width: i32 = sign32(bounding_box.size.width);
             let height: i32 = sign32(bounding_box.size.height);
             let origin = Point::new(bounding_box.top_left.x + width + 2, origin.y - height + 6);
+
             Circle::new(origin, 7)
                 .into_styled(PrimitiveStyle::with_stroke(TEXT_COLOR, 2))
                 .draw(display)
