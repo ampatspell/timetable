@@ -1,22 +1,14 @@
+use crate::{Display, components::utils::draw_text, payload::Tram};
 use core::ops::Add;
-
-use embedded_graphics::{
-    pixelcolor::Rgb565,
-    prelude::{Dimensions, DrawTarget, Point},
-};
+use embedded_graphics::prelude::Point;
 use profont::PROFONT_24_POINT;
-
-use crate::{components::utils::draw_text, payload::Tram};
 
 pub struct TramOptions<'a> {
     pub tram: &'a Tram,
     pub origin: Point,
 }
 
-pub fn draw_tram<D>(display: &mut D, opts: TramOptions) -> i32
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
+pub fn draw_tram(display: &mut impl Display, opts: TramOptions) -> i32 {
     let TramOptions { tram, origin } = opts;
 
     let string = &tram.time;
@@ -39,10 +31,7 @@ pub struct ScheduleOptions<'a> {
     pub origin: Point,
 }
 
-pub fn draw_schedule<D>(display: &mut D, opts: ScheduleOptions) -> ()
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
+pub fn draw_schedule(display: &mut impl Display, opts: ScheduleOptions) -> () {
     let ScheduleOptions { trams, origin } = opts;
 
     let mut y = -4;

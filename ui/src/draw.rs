@@ -1,4 +1,5 @@
 use crate::{
+    Display,
     components::{
         BACKGROUND_COLOR,
         schedule::{ScheduleOptions, draw_schedule},
@@ -7,18 +8,12 @@ use crate::{
     },
     payload::Payload,
 };
-use embedded_graphics::{
-    pixelcolor::Rgb565,
-    prelude::{Dimensions, DrawTarget, Point},
-};
+use embedded_graphics::prelude::Point;
 
 const WIDTH: i32 = 280;
 const HEIGHT: i32 = 240;
 
-pub fn draw_content<D>(display: &mut D, payload: Payload) -> ()
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
+pub fn draw_content(display: &mut impl Display, payload: Payload) -> () {
     let padding = 20;
 
     draw_weather(
@@ -41,9 +36,6 @@ where
     );
 }
 
-pub fn draw_first_frame<D>(display: &mut D) -> ()
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
+pub fn draw_first_frame(display: &mut impl Display) -> () {
     display.clear(BACKGROUND_COLOR).ok();
 }

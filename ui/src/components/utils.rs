@@ -1,13 +1,20 @@
+use crate::{
+    Display,
+    components::{BACKGROUND_COLOR, TEXT_COLOR},
+};
 use embedded_graphics::{
     mono_font::{MonoFont, MonoTextStyleBuilder},
-    pixelcolor::Rgb565,
     prelude::*,
     primitives::{Line, PrimitiveStyleBuilder, Rectangle},
     text::Text,
 };
 use no_std_strings::str32;
 
-use crate::components::{BACKGROUND_COLOR, TEXT_COLOR};
+pub fn float_to_string(value: f32) -> str32 {
+    let mut buffer = ryu::Buffer::new();
+    let value = buffer.format(value);
+    str32::from(value)
+}
 
 pub struct TextOptions<'a> {
     pub origin: Point,
@@ -15,10 +22,7 @@ pub struct TextOptions<'a> {
     pub font: &'a MonoFont<'a>,
 }
 
-pub fn draw_text<D>(display: &mut D, opts: TextOptions) -> Rectangle
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
+pub fn draw_text(display: &mut impl Display, opts: TextOptions) -> Rectangle {
     let TextOptions {
         origin,
         string,
@@ -46,16 +50,7 @@ where
     text.bounding_box()
 }
 
-pub fn float_to_string(value: f32) -> str32 {
-    let mut buffer = ryu::Buffer::new();
-    let value = buffer.format(value);
-    str32::from(value)
-}
-
-pub fn draw_line<D>(display: &mut D, start: Point, end: Point) -> ()
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
+pub fn draw_line(display: &mut impl Display, start: Point, end: Point) -> () {
     let style = PrimitiveStyleBuilder::new()
         .stroke_width(1)
         .stroke_color(TEXT_COLOR)
@@ -64,10 +59,7 @@ where
     Line::new(start, end).into_styled(style).draw(display).ok();
 }
 
-pub fn draw_horizontal_line<D>(display: &mut D, x1: i32, x2: i32, y: i32) -> ()
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
+pub fn draw_horizontal_line(display: &mut impl Display, x1: i32, x2: i32, y: i32) -> () {
     let start = Point::new(x1, y);
     let end = Point::new(x2, y);
     draw_line(display, start, end);

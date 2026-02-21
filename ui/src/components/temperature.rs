@@ -1,29 +1,24 @@
-use core::ops::Add;
-
-use embedded_graphics::{
-    pixelcolor::Rgb565,
-    prelude::*,
-    primitives::{Circle, PrimitiveStyle},
-};
-use profont::PROFONT_24_POINT;
-
 use crate::{
+    Display,
     components::{
         TEXT_COLOR,
         utils::{TextOptions, draw_text, float_to_string},
     },
     payload::Temperature,
 };
+use core::ops::Add;
+use embedded_graphics::{
+    prelude::*,
+    primitives::{Circle, PrimitiveStyle},
+};
+use profont::PROFONT_24_POINT;
 
 pub struct WeatherOptions<'a> {
     pub temperature: &'a Temperature,
     pub origin: Point,
 }
 
-pub fn draw_weather<D>(display: &mut D, opts: WeatherOptions) -> ()
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
+pub fn draw_weather(display: &mut impl Display, opts: WeatherOptions) -> () {
     let WeatherOptions {
         temperature,
         origin: _origin,

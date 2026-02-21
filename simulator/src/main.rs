@@ -1,7 +1,6 @@
+use crate::entrypoint::main_loop;
 use embedded_graphics::{pixelcolor::Rgb565, prelude::*};
 use embedded_graphics_simulator::{OutputSettingsBuilder, SimulatorDisplay, Window};
-
-use crate::entrypoint::main_loop;
 
 mod entrypoint;
 

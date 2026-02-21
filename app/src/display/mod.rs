@@ -1,7 +1,6 @@
+use crate::display::task::{DisplayTaskOptions, display_task};
 use embassy_executor::Spawner;
 use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
-
-use crate::display::task::{DisplayTaskOptions, display_task};
 
 mod create;
 mod task;

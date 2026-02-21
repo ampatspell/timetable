@@ -1,22 +1,15 @@
-use defmt::info;
-use embassy_time::{Duration, Timer};
-use embedded_graphics::{
-    Drawable,
-    mono_font::{MonoTextStyle, ascii::FONT_9X18_BOLD},
-    pixelcolor::Rgb565,
-    prelude::{Dimensions, DrawTarget, Point, RgbColor},
-    text::Text,
-};
-use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
-use no_std_strings::str128;
-use ui::{
-    draw::{draw_content, draw_first_frame},
-    payload::{Payload, Temperature, Tram, Weather, Wind},
-};
-
 use crate::{
     channel::{CHANNEL, Messages},
     display::create::{CreateDisplayOptions, create_display},
+};
+use defmt::info;
+use embassy_time::{Duration, Timer};
+use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
+use no_std_strings::str128;
+use ui::{
+    Display,
+    draw::{draw_content, draw_first_frame},
+    payload::{Payload, Temperature, Tram, Weather, Wind},
 };
 
 pub struct DisplayTaskOptions {
@@ -27,10 +20,7 @@ pub struct DisplayTaskOptions {
     pub backlight: Output<'static>,
 }
 
-fn fake_draw<D>(display: &mut D) -> ()
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
+fn fake_draw(display: &mut impl Display) -> () {
     let payload = Payload {
         weather: Weather {
             temperature: Temperature {
@@ -79,15 +69,7 @@ pub async fn display_task(opts: DisplayTaskOptions) {
     };
     Timer::after(Duration::from_secs(1)).await;
 
-    // let position = Point::new(40, 30);
-    // let style = MonoTextStyle::new(&FONT_9X18_BOLD, Rgb565::WHITE);
-
-    // Text::new("Connecting...", position, style)
-    //     .draw(&mut display)
-    //     .ok();
-
     fake_draw(&mut display);
-
     loop {
         let message = CHANNEL.receive().await;
         let payload = match message {

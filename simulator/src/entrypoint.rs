@@ -1,18 +1,13 @@
-use embedded_graphics::{
-    pixelcolor::Rgb565,
-    prelude::{Dimensions, DrawTarget},
-};
+use embedded_graphics::pixelcolor::Rgb565;
 use embedded_graphics_simulator::{SimulatorDisplay, SimulatorEvent, Window};
 use no_std_strings::str128;
 use ui::{
+    Display,
     draw::{draw_content, draw_first_frame},
     payload::{Payload, Temperature, Tram, Weather, Wind},
 };
 
-pub fn draw<D>(display: &mut D) -> ()
-where
-    D: DrawTarget<Color = Rgb565> + Dimensions,
-{
+pub fn draw(display: &mut impl Display) -> () {
     let payload = Payload {
         weather: Weather {
             temperature: Temperature {
