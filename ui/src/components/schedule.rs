@@ -1,7 +1,7 @@
 use crate::{Display, components::utils::draw_text, payload::Tram};
 use core::ops::Add;
 use embedded_graphics::prelude::Point;
-use profont::PROFONT_24_POINT;
+use profont::PROFONT_18_POINT;
 
 pub struct TramOptions<'a> {
     pub tram: &'a Tram,
@@ -12,7 +12,7 @@ pub fn draw_tram(display: &mut impl Display, opts: TramOptions) -> i32 {
     let TramOptions { tram, origin } = opts;
 
     let string = &tram.time;
-    let font = PROFONT_24_POINT;
+    let font = PROFONT_18_POINT;
 
     let rec = draw_text(
         display,
