@@ -5,42 +5,32 @@ use embedded_graphics::{
     primitives::Rectangle,
 };
 
-pub struct ImageTransparent<'a, T: ImageDrawable> {
+pub struct ProcessedImage<'a, T: ImageDrawable> {
     source: T,
-    transparent_color: T::Color,
-    process: &'a (dyn ProcessColor<T::Color> + 'a),
+    process: &'a (dyn ProcessPixelColor<T::Color> + 'a),
 }
 
-impl<'a, T: ImageDrawable> ImageTransparent<'a, T> {
-    pub fn new(
-        source: T,
-        transparent_color: T::Color,
-        process: &'a (dyn ProcessColor<T::Color> + 'a),
-    ) -> Self {
-        ImageTransparent {
-            source,
-            transparent_color,
-            process,
-        }
+impl<'a, T: ImageDrawable> ProcessedImage<'a, T> {
+    pub fn new(source: T, process: &'a (dyn ProcessPixelColor<T::Color> + 'a)) -> Self {
+        ProcessedImage { source, process }
     }
 }
 
-impl<'a, T: ImageDrawable> OriginDimensions for ImageTransparent<'a, T> {
+impl<'a, T: ImageDrawable> OriginDimensions for ProcessedImage<'a, T> {
     fn size(&self) -> Size {
         self.source.size()
     }
 }
 
-impl<'a, T: ImageDrawable> ImageDrawable for ImageTransparent<'a, T> {
+impl<'a, T: ImageDrawable> ImageDrawable for ProcessedImage<'a, T> {
     type Color = T::Color;
 
     fn draw<D>(&self, target: &mut D) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Self::Color>,
     {
-        let mut draw_target = TransparentDrawTarget {
+        let mut draw_target = ProcessedDrawTarget {
             target,
-            transparent_color: self.transparent_color,
             process: self.process,
         };
         self.source.draw(&mut draw_target)
@@ -50,28 +40,26 @@ impl<'a, T: ImageDrawable> ImageDrawable for ImageTransparent<'a, T> {
     where
         D: DrawTarget<Color = Self::Color>,
     {
-        let mut draw_target = TransparentDrawTarget {
+        let mut draw_target = ProcessedDrawTarget {
             target,
-            transparent_color: self.transparent_color,
             process: self.process,
         };
         self.source.draw_sub_image(&mut draw_target, area)
     }
 }
 
-struct TransparentDrawTarget<'a, T: DrawTarget> {
+struct ProcessedDrawTarget<'a, T: DrawTarget> {
     target: &'a mut T,
-    transparent_color: T::Color,
-    process: &'a (dyn ProcessColor<T::Color> + 'a),
+    process: &'a (dyn ProcessPixelColor<T::Color> + 'a),
 }
 
-impl<'a, T: DrawTarget> Dimensions for TransparentDrawTarget<'a, T> {
+impl<'a, T: DrawTarget> Dimensions for ProcessedDrawTarget<'a, T> {
     fn bounding_box(&self) -> Rectangle {
         self.target.bounding_box()
     }
 }
 
-impl<'a, T: DrawTarget> DrawTarget for TransparentDrawTarget<'a, T> {
+impl<'a, T: DrawTarget> DrawTarget for ProcessedDrawTarget<'a, T> {
     type Color = T::Color;
     type Error = T::Error;
 
@@ -83,7 +71,7 @@ impl<'a, T: DrawTarget> DrawTarget for TransparentDrawTarget<'a, T> {
         self.target.draw_iter(
             pixels
                 .into_iter()
-                .filter(|pixel| pixel.1 != self.transparent_color)
+                // .filter(|pixel| pixel.1 != self.transparent_color)
                 .map(|pixel| {
                     let point = pixel.0;
                     let color = process.process_color(pixel.1);
@@ -93,6 +81,6 @@ impl<'a, T: DrawTarget> DrawTarget for TransparentDrawTarget<'a, T> {
     }
 }
 
-pub trait ProcessColor<C: PixelColor> {
+pub trait ProcessPixelColor<C: PixelColor> {
     fn process_color(&self, color: C) -> C;
 }

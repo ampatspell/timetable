@@ -10,8 +10,7 @@ use crate::{
     Display,
     components::{
         BACKGROUND_COLOR,
-        transparent::{ImageTransparent, ProcessColor},
-        utils::{rgb565_to_rgb888, rgb888_to_rgb565},
+        transparent::{ProcessPixelColor, ProcessedImage},
     },
 };
 
@@ -75,7 +74,7 @@ impl<'a> Icons<'a> {
 
 pub struct Icon<'a> {
     pub name: &'a str,
-    image: ImageTransparent<'a, ImageRaw<'a, Rgb565, LittleEndian>>,
+    image: ProcessedImage<'a, ImageRaw<'a, Rgb565, LittleEndian>>,
 }
 
 impl<'a> Icon<'a> {
@@ -83,10 +82,10 @@ impl<'a> Icon<'a> {
         name: &'a str,
         data: &'a [u8],
         width: u32,
-        process: &'a (dyn ProcessColor<Rgb565> + 'static),
+        process: &'a (dyn ProcessPixelColor<Rgb565> + 'static),
     ) -> Self {
         let raw = ImageRawLE::<Rgb565>::new(data, width);
-        let image = ImageTransparent::new(raw, Rgb565::BLACK, process);
+        let image = ProcessedImage::new(raw, process);
         Self { name, image }
     }
 
@@ -97,6 +96,22 @@ impl<'a> Icon<'a> {
     }
 }
 
+pub fn blend(color: Rgb888, value: f64) -> Rgb888 {
+    let calc = |channel: u8| -> u8 { (channel as f64 * value) as u8 };
+    let r = calc(color.r());
+    let g = calc(color.g());
+    let b = calc(color.b());
+    Rgb888::new(r, g, b)
+}
+
+pub fn invert(color: Rgb888) -> Rgb888 {
+    let calc = |channel: u8| -> u8 { 255 - channel };
+    let r = calc(color.r());
+    let g = calc(color.g());
+    let b = calc(color.b());
+    Rgb888::new(r, g, b)
+}
+
 pub struct BlendBackground {
     background: Rgb888,
 }
@@ -104,36 +119,20 @@ pub struct BlendBackground {
 impl BlendBackground {
     pub fn new() -> Self {
         Self {
-            background: rgb565_to_rgb888(BACKGROUND_COLOR),
+            background: Rgb888::from(BACKGROUND_COLOR),
         }
     }
 
-    pub fn blend(&self, value: f32) -> Rgb888 {
+    pub fn blend(&self, value: f64) -> Rgb888 {
         let background = self.background;
-        let calc = |channel: u8| -> u8 { (channel as f32 * value) as u8 };
-        let r = calc(background.r());
-        let g = calc(background.g());
-        let b = calc(background.b());
-        Rgb888::new(r, g, b)
-    }
-
-    pub fn invert(&self, color: Rgb888) -> Rgb888 {
-        let calc = |channel: u8| -> u8 { 255 - channel };
-        let r = calc(color.r());
-        let g = calc(color.g());
-        let b = calc(color.b());
-        Rgb888::new(r, g, b)
+        blend(background, value)
     }
 }
 
-impl ProcessColor<Rgb565> for BlendBackground {
+impl ProcessPixelColor<Rgb565> for BlendBackground {
     fn process_color(&self, color: Rgb565) -> Rgb565 {
-        // let background = self.background;
-
-        let c = self.invert(rgb565_to_rgb888(color));
-        let value = ((c.r() as f32 + c.g() as f32 + c.b() as f32) / 3.0) / 255.0;
-        rgb888_to_rgb565(self.blend(value))
-
-        // Rgb565::new(r as u8, g as u8, b as u8)
+        let c = invert(Rgb888::from(color));
+        let value = c.r() as f64 / 255.0;
+        Rgb565::from(self.blend(value))
     }
 }
