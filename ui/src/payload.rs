@@ -20,6 +20,13 @@ pub struct Payload {
 pub fn parse(body: &str) -> Payload {
     let mut iter = body.split('\n').into_iter();
 
+    let year = iter.next().unwrap().parse::<u16>();
+    let month = iter.next().unwrap().parse::<u16>();
+    let date = iter.next().unwrap().parse::<u16>();
+    let h = iter.next().unwrap().parse::<u16>();
+    let m = iter.next().unwrap().parse::<u16>();
+    let s = iter.next().unwrap().parse::<u16>();
+
     let mut blocks = [BlockPayload {
         index: 0,
         icon: str32::new(),
