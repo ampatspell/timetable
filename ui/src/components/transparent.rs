@@ -85,11 +85,9 @@ impl<'a, T: DrawTarget> DrawTarget for TransparentDrawTarget<'a, T> {
                 .into_iter()
                 .filter(|pixel| pixel.1 != self.transparent_color)
                 .map(|pixel| {
+                    let point = pixel.0;
                     let color = process.process_color(pixel.1);
-                    Pixel {
-                        0: pixel.0,
-                        1: color,
-                    }
+                    Pixel { 0: point, 1: color }
                 }),
         )
     }

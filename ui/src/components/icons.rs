@@ -116,14 +116,22 @@ impl BlendBackground {
         let b = calc(background.b());
         Rgb888::new(r, g, b)
     }
+
+    pub fn invert(&self, color: Rgb888) -> Rgb888 {
+        let calc = |channel: u8| -> u8 { 255 - channel };
+        let r = calc(color.r());
+        let g = calc(color.g());
+        let b = calc(color.b());
+        Rgb888::new(r, g, b)
+    }
 }
 
 impl ProcessColor<Rgb565> for BlendBackground {
     fn process_color(&self, color: Rgb565) -> Rgb565 {
         // let background = self.background;
 
-        let c = rgb565_to_rgb888(color);
-        let value = 1.0 - (((c.r() as f32 + c.g() as f32 + c.b() as f32) / 3.0) / 255.0);
+        let c = self.invert(rgb565_to_rgb888(color));
+        let value = ((c.r() as f32 + c.g() as f32 + c.b() as f32) / 3.0) / 255.0;
         rgb888_to_rgb565(self.blend(value))
 
         // Rgb565::new(r as u8, g as u8, b as u8)
