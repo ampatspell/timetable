@@ -16,19 +16,12 @@ pub fn float_to_string(value: f32) -> str32 {
     str32::from(value)
 }
 
-pub struct TextOptions<'a> {
-    pub origin: Point,
-    pub string: &'a str,
-    pub font: &'a MonoFont<'a>,
-}
-
-pub fn draw_text(display: &mut impl Display, opts: TextOptions) -> Rectangle {
-    let TextOptions {
-        origin,
-        string,
-        font,
-    } = opts;
-
+pub fn draw_text<'a>(
+    display: &mut impl Display,
+    origin: Point,
+    string: &'a str,
+    font: &'a MonoFont<'a>,
+) -> Rectangle {
     let style = MonoTextStyleBuilder::new()
         .font(font)
         .text_color(TEXT_COLOR)

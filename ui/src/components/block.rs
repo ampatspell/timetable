@@ -6,10 +6,7 @@ use profont::PROFONT_18_POINT;
 
 use crate::{
     Display,
-    components::{
-        icons::Icons,
-        utils::{TextOptions, draw_text},
-    },
+    components::{icons::Icons, utils::draw_text},
 };
 
 pub struct BlockContext<'a> {
@@ -38,11 +35,9 @@ impl<'a> Block<'a> {
 
         let _ = draw_text(
             display,
-            TextOptions {
-                origin: origin.add(Point::new(30, -4)),
-                string: &self.lines[0],
-                font: &PROFONT_18_POINT,
-            },
+            origin.add(Point::new(30, -4)),
+            &self.lines[0],
+            &PROFONT_18_POINT,
         );
 
         24
