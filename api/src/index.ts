@@ -17,6 +17,7 @@ router.get('/', async (ctx) => {
     now: new TZDate(new Date(), 'Europe/Riga')
   });
 
+
   let t = (idx: number) => {
     let value = timetable[idx];
     if(value) {
@@ -26,7 +27,15 @@ router.get('/', async (ctx) => {
     return '';
   }
 
+  let now = new TZDate(new Date(), 'Europe/Riga');
+  let h = now.getHours();
+  let m = now.getMinutes();
+  let s = now.getSeconds();
+
   let lines = dedent`
+    ${h}
+    ${m}
+    ${s}
     clock
     01:04:42
 
