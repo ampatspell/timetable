@@ -1,62 +1,45 @@
-use defmt::{Formatter, write};
-use no_std_strings::str128;
+use no_std_strings::{str32, str128};
 
-pub struct Temperature {
-    pub value: f32,
-    pub description: str128,
+#[derive(Copy, Clone)]
+pub struct LinePayload {
+    pub value: str128,
 }
 
-pub struct Wind {
-    pub speed: f32,
-    pub direction: u16,
+#[derive(Copy, Clone)]
+pub struct BlockPayload {
+    pub index: u8,
+    pub icon: str32,
+    pub lines: [LinePayload; 2],
 }
 
-pub struct Tram {
-    pub time: str128,
-    pub adjustment: i64,
-}
-
-pub struct Weather {
-    pub temperature: Temperature,
-    pub wind: Wind,
-}
-
+#[derive(Copy, Clone)]
 pub struct Payload {
-    pub weather: Weather,
-    pub trams: [Tram; 2],
+    pub blocks: [BlockPayload; 6],
 }
 
-impl defmt::Format for Payload {
-    fn format(&self, fmt: Formatter) {
-        write!(fmt, "Payload({}, {})", self.weather, self.trams);
-    }
-}
+pub fn parse(body: &str) -> Payload {
+    let mut iter = body.split('\n').into_iter();
 
-impl defmt::Format for Weather {
-    fn format(&self, fmt: Formatter) {
-        write!(fmt, "Weather({}, {})", self.temperature, self.wind);
-    }
-}
+    let mut blocks = [BlockPayload {
+        index: 0,
+        icon: str32::new(),
+        lines: [
+            LinePayload {
+                value: str128::new(),
+            },
+            LinePayload {
+                value: str128::new(),
+            },
+        ],
+    }; 6];
 
-impl defmt::Format for Temperature {
-    fn format(&self, fmt: Formatter) {
-        write!(
-            fmt,
-            "Temperature({}, {})",
-            self.value,
-            self.description.as_str()
-        );
+    for index in 0..5 {
+        let mut block = blocks[index];
+        block.icon = str32::from(iter.next().unwrap());
+        block.lines[0].value = str128::from(iter.next().unwrap());
+        block.lines[1].value = str128::from(iter.next().unwrap());
+        blocks[index] = block;
     }
-}
 
-impl defmt::Format for Wind {
-    fn format(&self, fmt: Formatter) {
-        write!(fmt, "Wind({}, {})", self.speed, self.direction);
-    }
-}
-
-impl defmt::Format for Tram {
-    fn format(&self, fmt: Formatter) {
-        write!(fmt, "Tram({}, {})", self.time.as_str(), self.adjustment);
-    }
+    Payload { blocks }
 }

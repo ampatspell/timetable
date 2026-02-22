@@ -1,5 +1,4 @@
 use crate::channel::{CHANNEL, Messages};
-use crate::network::parse::parse;
 use defmt::info;
 use embassy_net::Stack;
 use embassy_net::dns::DnsSocket;
@@ -7,6 +6,7 @@ use embassy_net::tcp::client::{TcpClient, TcpClientState};
 use embassy_time::{Duration, Timer};
 use no_std_strings::str256;
 use reqwless::client::HttpClient;
+use ui::payload::parse;
 
 #[derive(Debug, Clone)]
 struct RequestFailedError;
@@ -48,7 +48,6 @@ pub async fn request_task(stack: Stack<'static>) {
             Ok(s) => {
                 let str = s.to_str();
                 let payload = parse(str);
-                info!("{}", payload);
                 CHANNEL.send(Messages::Update { payload }).await;
             }
             Err(_) => {

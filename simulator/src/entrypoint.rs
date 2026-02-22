@@ -1,48 +1,13 @@
 use embedded_graphics::pixelcolor::Rgb565;
 use embedded_graphics_simulator::{SimulatorDisplay, SimulatorEvent, Window};
-use no_std_strings::str128;
-use ui::{
-    Display,
-    components::icons::Icons,
-    draw::{draw_content, draw_first_frame},
-    payload::{Payload, Temperature, Tram, Weather, Wind},
-};
-
-pub fn draw<'a>(display: &mut impl Display, icons: &'a Icons<'a>) -> () {
-    let payload = Payload {
-        weather: Weather {
-            temperature: Temperature {
-                value: -5.7,
-                description: str128::from("Snow grains falling."),
-            },
-            wind: Wind {
-                speed: 12.1,
-                direction: 37,
-            },
-        },
-        trams: (
-            Tram {
-                time: str128::from("03:55"),
-                adjustment: -103,
-            },
-            Tram {
-                time: str128::from("04:21"),
-                adjustment: 0,
-            },
-        )
-            .into(),
-    };
-
-    draw_content(display, payload, icons);
-}
+use ui::draw::UI;
 
 pub fn main_loop(display: &mut SimulatorDisplay<Rgb565>, window: &mut Window) -> () {
-    let icons = Icons::new();
-
-    draw_first_frame(display);
+    let mut ui = UI::new();
+    ui.prepare(display);
     loop {
-        draw(display, &icons);
-        window.update(display);
+        ui.draw(display);
+        window.update(&display);
 
         for event in window.events() {
             match event {

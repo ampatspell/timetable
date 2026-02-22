@@ -12,7 +12,6 @@ use esp_radio::wifi::{
 };
 use static_cell::StaticCell;
 
-mod parse;
 mod request;
 
 static RADIO_INIT: StaticCell<Controller<'static>> = StaticCell::new();

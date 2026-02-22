@@ -1,18 +1,28 @@
 use crate::{
     Display,
-    components::{BACKGROUND_COLOR, block::Blocks, icons::Icons},
-    payload::Payload,
+    components::{BACKGROUND_COLOR, block::Blocks},
 };
 use embedded_graphics::prelude::*;
 
-// const WIDTH: i32 = 280;
-// const HEIGHT: i32 = 240;
-
-pub fn draw_content<'a>(display: &mut impl Display, payload: Payload, icons: &'a Icons<'a>) -> () {
-    let blocks = Blocks::new(Point::new(35, 25), icons);
-    blocks.draw(display);
+pub struct UI<'a> {
+    blocks: Blocks<'a>,
 }
 
-pub fn draw_first_frame(display: &mut impl Display) -> () {
-    display.clear(BACKGROUND_COLOR).ok();
+impl<'a> UI<'a> {
+    pub fn new() -> Self {
+        let blocks = Blocks::new(Point::new(35, 25));
+        Self { blocks }
+    }
+
+    pub fn draw(&self, display: &mut impl Display) -> () {
+        self.blocks.draw(display);
+    }
+
+    pub fn prepare(&mut self, display: &mut impl Display) {
+        display.clear(BACKGROUND_COLOR).ok();
+    }
+
+    pub fn update(&mut self) {
+        self.blocks.update();
+    }
 }

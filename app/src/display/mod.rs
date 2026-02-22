@@ -1,4 +1,4 @@
-use crate::display::task::{DisplayTaskOptions, display_task};
+use crate::display::task::{DisplayTaskOptions, display_task, display_timer_task};
 use embassy_executor::Spawner;
 use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
 
@@ -33,4 +33,6 @@ pub fn configure_display<'a>(options: ConfigureDisplayOptions<'a>) {
             backlight,
         }))
         .ok();
+
+    spawner.spawn(display_timer_task()).ok();
 }

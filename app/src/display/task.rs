@@ -5,13 +5,7 @@ use crate::{
 use defmt::info;
 use embassy_time::{Duration, Timer};
 use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
-use no_std_strings::str128;
-use ui::{
-    Display,
-    components::icons::Icons,
-    draw::{draw_content, draw_first_frame},
-    payload::{Payload, Temperature, Tram, Weather, Wind},
-};
+use ui::draw::UI;
 
 pub struct DisplayTaskOptions {
     pub spi: Spi<'static, Blocking>,
@@ -19,34 +13,6 @@ pub struct DisplayTaskOptions {
     pub dc: Output<'static>,
     pub cs: Output<'static>,
     pub backlight: Output<'static>,
-}
-
-fn fake_draw(display: &mut impl Display, icons: &Icons) -> () {
-    let payload = Payload {
-        weather: Weather {
-            temperature: Temperature {
-                value: -5.7,
-                description: str128::from("Snow grains fall"),
-            },
-            wind: Wind {
-                speed: 12.1,
-                direction: 37,
-            },
-        },
-        trams: (
-            Tram {
-                time: str128::from("03:55"),
-                adjustment: -103,
-            },
-            Tram {
-                time: str128::from("04:21"),
-                adjustment: 0,
-            },
-        )
-            .into(),
-    };
-
-    draw_content(display, payload, icons);
 }
 
 #[embassy_executor::task]
@@ -61,23 +27,37 @@ pub async fn display_task(opts: DisplayTaskOptions) {
     info!("Start display_task");
 
     let mut display = create_display(CreateDisplayOptions { spi, rst, dc, cs });
-    let icons = Icons::new();
+    let mut ui = UI::new();
 
-    draw_first_frame(&mut display);
+    ui.prepare(&mut display);
 
-    let _backlight = {
+    {
         let mut backlight = backlight;
         backlight.set_high();
     };
-    Timer::after(Duration::from_secs(1)).await;
 
-    fake_draw(&mut display, &icons);
+    Timer::after(Duration::from_secs(1)).await;
 
     loop {
         let message = CHANNEL.receive().await;
-        let _ = match message {
-            Messages::Update { payload } => payload,
+        match message {
+            Messages::Update { payload } => {
+                info!("Heelo");
+                ui.draw(&mut display);
+            }
+            Messages::Ping { .. } => {
+                info!("hello");
+                ui.update();
+                ui.draw(&mut display);
+            }
         };
-        // draw_content(&mut display, payload, &icons);
+    }
+}
+
+#[embassy_executor::task]
+pub async fn display_timer_task() {
+    loop {
+        CHANNEL.send(Messages::Ping {}).await;
+        Timer::after(Duration::from_secs(1)).await;
     }
 }
