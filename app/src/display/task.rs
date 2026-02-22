@@ -8,6 +8,7 @@ use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
 use no_std_strings::str128;
 use ui::{
     Display,
+    components::icons::Icons,
     draw::{draw_content, draw_first_frame},
     payload::{Payload, Temperature, Tram, Weather, Wind},
 };
@@ -20,12 +21,12 @@ pub struct DisplayTaskOptions {
     pub backlight: Output<'static>,
 }
 
-fn fake_draw(display: &mut impl Display) -> () {
+fn fake_draw(display: &mut impl Display, icons: &Icons) -> () {
     let payload = Payload {
         weather: Weather {
             temperature: Temperature {
                 value: -5.7,
-                description: str128::from("Snow grains falling."),
+                description: str128::from("Snow grains fall"),
             },
             wind: Wind {
                 speed: 12.1,
@@ -45,7 +46,7 @@ fn fake_draw(display: &mut impl Display) -> () {
             .into(),
     };
 
-    draw_content(display, payload);
+    draw_content(display, payload, icons);
 }
 
 #[embassy_executor::task]
@@ -60,6 +61,7 @@ pub async fn display_task(opts: DisplayTaskOptions) {
     info!("Start display_task");
 
     let mut display = create_display(CreateDisplayOptions { spi, rst, dc, cs });
+    let icons = Icons::new();
 
     draw_first_frame(&mut display);
 
@@ -69,12 +71,13 @@ pub async fn display_task(opts: DisplayTaskOptions) {
     };
     Timer::after(Duration::from_secs(1)).await;
 
-    fake_draw(&mut display);
+    fake_draw(&mut display, &icons);
+
     loop {
         let message = CHANNEL.receive().await;
-        let payload = match message {
+        let _ = match message {
             Messages::Update { payload } => payload,
         };
-        draw_content(&mut display, payload);
+        // draw_content(&mut display, payload, &icons);
     }
 }

@@ -27,12 +27,12 @@ impl<'a> Block<'a> {
         display: &mut impl Display,
         context: &BlockContext<'a>,
         origin: Point,
-    ) -> i32 {
+    ) -> u32 {
         context
             .icons
             .draw_at(display, self.icon, origin.add(Point::new(0, 0)));
 
-        let mut point = origin.add(Point::new(30, -4));
+        let mut point = origin.add(Point::new(35, -4));
         let mut y = 0;
 
         self.lines
@@ -42,7 +42,7 @@ impl<'a> Block<'a> {
                 let rect = draw_text(display, point, &line, &PROFONT_18_POINT);
                 let size = rect.size;
                 point = point.add(Point::new(0, size.height as i32));
-                y += 24;
+                y += size.height + 3;
             });
 
         y
@@ -61,7 +61,7 @@ impl<'a> Blocks<'a> {
             Block::new("clock", [str32::from("01:04:42"), str32::new()]),
             Block::new(
                 "cloud-snow",
-                [str32::from("-05.70"), str32::from("Snow grains falling.")],
+                [str32::from("-05.70"), str32::from("Snow grains fall")],
             ),
             Block::new("sun", [str32::from("01"), str32::new()]),
             Block::new("sunrise", [str32::from("06:39:10"), str32::new()]),
@@ -80,9 +80,9 @@ impl<'a> Blocks<'a> {
     }
 
     pub fn draw(&self, display: &mut impl Display) {
-        let mut y = 0;
+        let mut y: u32 = 0;
         self.blocks.iter().for_each(|block| {
-            let origin = self.origin.add(Point::new(0, y));
+            let origin = self.origin.add(Point::new(0, y as i32));
             y += block.draw_at(display, &self.context, origin);
         });
     }
