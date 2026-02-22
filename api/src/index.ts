@@ -28,11 +28,17 @@ router.get('/', async (ctx) => {
   }
 
   let now = new TZDate(new Date(), 'Europe/Riga');
+  let y = now.getFullYear();
+  let mo = now.getMonth();
+  let d = now.getDate();
   let h = now.getHours();
   let m = now.getMinutes();
   let s = now.getSeconds();
 
   let lines = dedent`
+    ${y}
+    ${mo}
+    ${d}
     ${h}
     ${m}
     ${s}
