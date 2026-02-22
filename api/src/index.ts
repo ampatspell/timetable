@@ -32,7 +32,7 @@ router.get('/', async (ctx) => {
 
     cloud-snow
     ${weather.temperature.value}
-    ${weather.temperature.description}
+    ${weather.temperature.description?.short ?? ''}
     sun
     01
 
