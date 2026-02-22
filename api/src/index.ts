@@ -8,6 +8,11 @@ import dedent from 'dedent';
 
 const router = new Router();
 
+router.get('/weather', async (ctx) => {
+  const weather = await fetchWeather();
+  ctx.body = weather;
+});
+
 router.get('/', async (ctx) => {
   const weather = await fetchWeather();
   const timetable =  await loadTimetable({
