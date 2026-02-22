@@ -2,7 +2,7 @@ use crate::{
     Display,
     components::{
         TEXT_COLOR,
-        utils::{TextOptions, draw_text, float_to_string},
+        utils::{draw_text, float_to_string},
     },
     payload::Temperature,
 };
@@ -37,14 +37,7 @@ pub fn draw_weather(display: &mut impl Display, opts: WeatherOptions) -> () {
 
         let font = PROFONT_24_POINT;
         let bounding_box = {
-            let bounding_box = draw_text(
-                display,
-                TextOptions {
-                    origin,
-                    string: &string,
-                    font: &font,
-                },
-            );
+            let bounding_box = draw_text(display, origin, &string, &font);
 
             bounding_box
         };
@@ -64,11 +57,9 @@ pub fn draw_weather(display: &mut impl Display, opts: WeatherOptions) -> () {
     {
         draw_text(
             display,
-            TextOptions {
-                origin: origin.add(Point::new(0, 26)),
-                string: &temperature.description,
-                font: &profont::PROFONT_14_POINT,
-            },
+            origin.add(Point::new(0, 26)),
+            &temperature.description,
+            &profont::PROFONT_14_POINT,
         );
     }
 }

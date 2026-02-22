@@ -3,7 +3,9 @@
     "defmt",
     "Pico",
     "pixelcolor",
-    "PROFONT"
+    "PROFONT",
+    "tabler",
+    "uninit"
   ],
   "editor.formatOnSave": true
 }

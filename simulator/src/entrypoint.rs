@@ -3,11 +3,12 @@ use embedded_graphics_simulator::{SimulatorDisplay, SimulatorEvent, Window};
 use no_std_strings::str128;
 use ui::{
     Display,
+    components::icons::Icons,
     draw::{draw_content, draw_first_frame},
     payload::{Payload, Temperature, Tram, Weather, Wind},
 };
 
-pub fn draw(display: &mut impl Display) -> () {
+pub fn draw<'a>(display: &mut impl Display, icons: &'a Icons<'a>) -> () {
     let payload = Payload {
         weather: Weather {
             temperature: Temperature {
@@ -32,13 +33,15 @@ pub fn draw(display: &mut impl Display) -> () {
             .into(),
     };
 
-    draw_content(display, payload);
+    draw_content(display, payload, icons);
 }
 
 pub fn main_loop(display: &mut SimulatorDisplay<Rgb565>, window: &mut Window) -> () {
+    let icons = Icons::new();
+
     draw_first_frame(display);
     loop {
-        draw(display);
+        draw(display, &icons);
         window.update(display);
 
         for event in window.events() {

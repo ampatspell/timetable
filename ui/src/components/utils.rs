@@ -4,6 +4,7 @@ use crate::{
 };
 use embedded_graphics::{
     mono_font::{MonoFont, MonoTextStyleBuilder},
+    pixelcolor::Rgb888,
     prelude::*,
     primitives::{Line, PrimitiveStyleBuilder, Rectangle},
     text::Text,
@@ -16,19 +17,12 @@ pub fn float_to_string(value: f32) -> str32 {
     str32::from(value)
 }
 
-pub struct TextOptions<'a> {
-    pub origin: Point,
-    pub string: &'a str,
-    pub font: &'a MonoFont<'a>,
-}
-
-pub fn draw_text(display: &mut impl Display, opts: TextOptions) -> Rectangle {
-    let TextOptions {
-        origin,
-        string,
-        font,
-    } = opts;
-
+pub fn draw_text<'a>(
+    display: &mut impl Display,
+    origin: Point,
+    string: &'a str,
+    font: &'a MonoFont<'a>,
+) -> Rectangle {
     let style = MonoTextStyleBuilder::new()
         .font(font)
         .text_color(TEXT_COLOR)
@@ -63,4 +57,25 @@ pub fn draw_horizontal_line(display: &mut impl Display, x1: i32, x2: i32, y: i32
     let start = Point::new(x1, y);
     let end = Point::new(x2, y);
     draw_line(display, start, end);
+}
+
+pub fn invert(color: Rgb888) -> Rgb888 {
+    let calc = |channel: u8| -> u8 { 255 - channel };
+    let r = calc(color.r());
+    let g = calc(color.g());
+    let b = calc(color.b());
+    Rgb888::new(r, g, b)
+}
+
+pub fn blend(bg: Rgb888, fg: Rgb888, alpha: u8) -> Rgb888 {
+    let calc = |bg: u8, fg: u8| {
+        let a = fg as u32 * alpha as u32;
+        let b = bg as u32 * (255 - alpha as u32);
+        (a + b) / 255
+    };
+    let r = calc(bg.r(), fg.r());
+    let g = calc(bg.g(), fg.g());
+    let b = calc(bg.b(), fg.b());
+
+    Rgb888::new(r as u8, g as u8, b as u8)
 }

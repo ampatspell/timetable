@@ -14,14 +14,7 @@ pub fn draw_tram(display: &mut impl Display, opts: TramOptions) -> i32 {
     let string = &tram.time;
     let font = PROFONT_18_POINT;
 
-    let rec = draw_text(
-        display,
-        super::utils::TextOptions {
-            origin,
-            string,
-            font: &font,
-        },
-    );
+    let rec = draw_text(display, origin, string, &font);
 
     rec.size.height.try_into().unwrap()
 }
