@@ -43,7 +43,7 @@ pub fn alpha_to_565(alpha: f32) -> u16 {
     rgb565::Rgb565::from_rgb888_components(value, value, value).to_rgb565()
 }
 
-pub fn create_raw(raster: Raster8) -> Vec<u8> {
+pub fn create_raw(raster: &Raster8) -> Vec<u8> {
     let width = raster.width();
     let height = raster.height();
 
@@ -63,6 +63,23 @@ pub fn create_raw(raster: Raster8) -> Vec<u8> {
     buffer
 }
 
+pub fn create_alpha(raster: &Raster8) -> Vec<u8> {
+    let width = raster.width();
+    let height = raster.height();
+
+    let mut buffer = Vec::<u8>::new();
+
+    for y in 0..height {
+        for x in 0..width {
+            let pixel = raster.pixel(x.try_into().unwrap(), y.try_into().unwrap());
+            let alpha: u8 = pixel.alpha().into();
+            buffer.push(alpha);
+        }
+    }
+
+    buffer
+}
+
 pub fn write_raw(name: &str, buffer: &Vec<u8>) -> () {
     let mut file = File::create(path_for(name, "raw")).expect("Should be able to create file");
     file.write_all(buffer).expect("Raw write failed");
@@ -71,7 +88,7 @@ pub fn write_raw(name: &str, buffer: &Vec<u8>) -> () {
 pub fn process(name: &str) -> () {
     println!("{}", name);
     let raster = load_raster(name);
-    let buffer = create_raw(raster);
+    let buffer = create_alpha(&raster);
     write_raw(name, &buffer);
 }
 

@@ -4,6 +4,7 @@ use embedded_graphics::{
     pixelcolor::{Rgb565, Rgb888, raw::LittleEndian},
     prelude::*,
 };
+use lab::Lab;
 use static_cell::StaticCell;
 
 use crate::{
@@ -11,17 +12,18 @@ use crate::{
     components::{
         BACKGROUND_COLOR,
         transparent::{ProcessPixelColor, ProcessedImage},
+        utils::invert,
     },
 };
 
 pub struct Icons<'a> {
     map: [Icon<'a>; 6],
 }
-static PROCESS: StaticCell<BlendBackground> = StaticCell::new();
+static PROCESS: StaticCell<BlendInBackground> = StaticCell::new();
 
 impl<'a> Icons<'a> {
     pub fn new() -> Self {
-        let process = PROCESS.uninit().write(BlendBackground::new());
+        let process = PROCESS.uninit().write(BlendInBackground::new());
         let map = [
             Icon::new(
                 "bus-stop",
@@ -96,43 +98,44 @@ impl<'a> Icon<'a> {
     }
 }
 
-pub fn blend(color: Rgb888, value: f64) -> Rgb888 {
-    let calc = |channel: u8| -> u8 { (channel as f64 * value) as u8 };
-    let r = calc(color.r());
-    let g = calc(color.g());
-    let b = calc(color.b());
-    Rgb888::new(r, g, b)
-}
-
-pub fn invert(color: Rgb888) -> Rgb888 {
-    let calc = |channel: u8| -> u8 { 255 - channel };
-    let r = calc(color.r());
-    let g = calc(color.g());
-    let b = calc(color.b());
-    Rgb888::new(r, g, b)
-}
-
-pub struct BlendBackground {
+pub struct BlendInBackground {
     background: Rgb888,
 }
 
-impl BlendBackground {
+impl BlendInBackground {
     pub fn new() -> Self {
         Self {
             background: Rgb888::from(BACKGROUND_COLOR),
         }
     }
 
-    pub fn blend(&self, value: f64) -> Rgb888 {
+    pub fn blend(&self, color: Rgb888) -> Rgb888 {
         let background = self.background;
-        blend(background, value)
+
+        if color.r() == 255 {
+            return background;
+        }
+
+        let c_background = [background.r(), background.g(), background.b()];
+        let l_background = Lab::from_rgb(&c_background);
+
+        let c_color = [color.r(), color.g(), color.b()];
+        let l_color = Lab::from_rgb(&c_color);
+
+        let l = Lab {
+            l: (l_background.l + l_color.l) / 2.0,
+            a: (l_background.a + l_color.a) / 2.0,
+            b: (l_background.b + l_color.b) / 2.0,
+        };
+
+        let [r, g, b] = l.to_rgb();
+        Rgb888::new(r, g, b)
     }
 }
 
-impl ProcessPixelColor<Rgb565> for BlendBackground {
-    fn process_color(&self, color: Rgb565) -> Rgb565 {
-        let c = invert(Rgb888::from(color));
-        let value = c.r() as f64 / 255.0;
-        Rgb565::from(self.blend(value))
+impl ProcessPixelColor<Rgb565> for BlendInBackground {
+    fn process_color(&self, _color: Rgb565) -> Rgb565 {
+        let color = invert(Rgb888::from(_color));
+        Rgb565::from(self.blend(color))
     }
 }
