@@ -4,6 +4,7 @@ use crate::{
 };
 use embedded_graphics::{
     mono_font::{MonoFont, MonoTextStyleBuilder},
+    pixelcolor::{Rgb565, Rgb888},
     prelude::*,
     primitives::{Line, PrimitiveStyleBuilder, Rectangle},
     text::Text,
@@ -56,4 +57,18 @@ pub fn draw_horizontal_line(display: &mut impl Display, x1: i32, x2: i32, y: i32
     let start = Point::new(x1, y);
     let end = Point::new(x2, y);
     draw_line(display, start, end);
+}
+
+pub fn rgb565_to_rgb888(color: Rgb565) -> Rgb888 {
+    let r = (color.r() as u16 * 527 + 23) >> 6;
+    let g = (color.g() as u16 * 259 + 33) >> 6;
+    let b = (color.b() as u16 * 527 + 23) >> 6;
+    Rgb888::new(r as u8, g as u8, b as u8)
+}
+
+pub fn rgb888_to_rgb565(color: Rgb888) -> Rgb565 {
+    let r = (color.r() as u16 * 249 + 1014) >> 11;
+    let g = (color.g() as u16 * 253 + 505) >> 10;
+    let b = (color.b() as u16 * 249 + 1014) >> 11;
+    Rgb565::new(r as u8, g as u8, b as u8)
 }

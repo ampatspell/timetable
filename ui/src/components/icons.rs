@@ -1,14 +1,18 @@
 use defmt::info;
 use embedded_graphics::{
     image::{Image, ImageRaw, ImageRawLE},
-    pixelcolor::{Rgb565, raw::LittleEndian},
+    pixelcolor::{Rgb565, Rgb888, raw::LittleEndian},
     prelude::*,
 };
 use static_cell::StaticCell;
 
 use crate::{
     Display,
-    components::transparent::{ImageTransparent, ProcessColor},
+    components::{
+        BACKGROUND_COLOR,
+        transparent::{ImageTransparent, ProcessColor},
+        utils::{rgb565_to_rgb888, rgb888_to_rgb565},
+    },
 };
 
 pub struct Icons<'a> {
@@ -93,16 +97,35 @@ impl<'a> Icon<'a> {
     }
 }
 
-pub struct BlendBackground {}
+pub struct BlendBackground {
+    background: Rgb888,
+}
 
 impl BlendBackground {
     pub fn new() -> Self {
-        Self {}
+        Self {
+            background: rgb565_to_rgb888(BACKGROUND_COLOR),
+        }
+    }
+
+    pub fn blend(&self, value: f32) -> Rgb888 {
+        let background = self.background;
+        let calc = |channel: u8| -> u8 { (channel as f32 * value) as u8 };
+        let r = calc(background.r());
+        let g = calc(background.g());
+        let b = calc(background.b());
+        Rgb888::new(r, g, b)
     }
 }
 
 impl ProcessColor<Rgb565> for BlendBackground {
     fn process_color(&self, color: Rgb565) -> Rgb565 {
-        color
+        // let background = self.background;
+
+        let c = rgb565_to_rgb888(color);
+        let value = 1.0 - (((c.r() as f32 + c.g() as f32 + c.b() as f32) / 3.0) / 255.0);
+        rgb888_to_rgb565(self.blend(value))
+
+        // Rgb565::new(r as u8, g as u8, b as u8)
     }
 }
