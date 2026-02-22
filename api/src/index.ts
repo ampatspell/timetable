@@ -4,6 +4,7 @@ import { fetchWeather } from './weather.js';
 import { loadTimetable } from './timetable/index.js';
 import { TZDate } from '@date-fns/tz';
 import { setTimeout } from 'node:timers/promises';
+import dedent from 'dedent';
 
 const router = new Router();
 
@@ -16,15 +17,35 @@ router.get('/', async (ctx) => {
     now: new TZDate(new Date(), 'Europe/Riga')
   });
 
-  const lines = [
-    weather.temperature.value,
-    weather.temperature.description?.long ?? '',
-    weather.wind.speed,
-    weather.wind.direction,
-    ...(timetable.map(entry => {
-      return [entry.time, entry.delay];
-    })).flat(),
-  ].join('\n');
+  let t = (idx: number) => {
+    let value = timetable[idx];
+    if(value) {
+      let d = value.delay ? `${value.delay}s` : undefined;
+      return [value.time, d].filter(Boolean).join(' ');
+    }
+    return '';
+  }
+
+  let lines = dedent`
+    clock
+    01:04:42
+
+    cloud-snow
+    ${weather.temperature.value}
+    ${weather.temperature.description}
+    sun
+    01
+
+    sunrise
+    06:39:10
+
+    sunset
+    03:11:45
+
+    bus-stop
+    ${t(0)}
+    ${t(1)}
+  `;
 
   ctx.body = lines;
 });
@@ -46,3 +67,4 @@ app.listen(3000);
 //   });
 //   console.log(t);
 // })()
+
