@@ -48,8 +48,8 @@ pub fn create_raw(raster: Raster8) -> Vec<u8> {
 
     let mut buffer = Vec::<u8>::new();
 
-    for x in 0..width {
-        for y in 0..height {
+    for y in 0..height {
+        for x in 0..width {
             let pixel = raster.pixel(x.try_into().unwrap(), y.try_into().unwrap());
             let alpha = pixel.alpha().to_f32();
             let value = alpha_to_565(alpha);

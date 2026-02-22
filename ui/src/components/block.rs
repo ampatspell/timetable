@@ -46,13 +46,20 @@ impl<'a> Block<'a> {
 
 pub struct Blocks<'a> {
     origin: Point,
-    blocks: [Block<'a>; 2],
+    blocks: [Block<'a>; 6],
     context: BlockContext<'a>,
 }
 
 impl<'a> Blocks<'a> {
     pub fn new(origin: Point, icons: &'a Icons<'a>) -> Self {
-        let blocks = [Block::new("sun"), Block::new("sun")];
+        let blocks = [
+            Block::new("clock"),
+            Block::new("cloud-snow"),
+            Block::new("sun"),
+            Block::new("sunrise"),
+            Block::new("sunset"),
+            Block::new("bus-stop"),
+        ];
         let context = BlockContext { icons };
         Self {
             origin,

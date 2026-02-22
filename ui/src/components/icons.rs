@@ -9,16 +9,43 @@ use crate::{Display, components::transparent::ImageTransparent};
 
 #[derive(Debug)]
 pub struct Icons<'a> {
-    map: [Icon<'a>; 1],
+    map: [Icon<'a>; 6],
 }
 
 impl<'a> Icons<'a> {
     pub fn new() -> Self {
-        let map = [Icon::new(
-            "sun",
-            include_bytes!("../../../images/assets/tabler-icon-sun.raw"),
-            24,
-        )];
+        let map = [
+            Icon::new(
+                "bus-stop",
+                include_bytes!("../../../images/assets/tabler-icon-bus-stop.raw"),
+                24,
+            ),
+            Icon::new(
+                "clock",
+                include_bytes!("../../../images/assets/tabler-icon-clock.raw"),
+                24,
+            ),
+            Icon::new(
+                "cloud-snow",
+                include_bytes!("../../../images/assets/tabler-icon-cloud-snow.raw"),
+                24,
+            ),
+            Icon::new(
+                "sun",
+                include_bytes!("../../../images/assets/tabler-icon-sun.raw"),
+                24,
+            ),
+            Icon::new(
+                "sunrise",
+                include_bytes!("../../../images/assets/tabler-icon-sunrise.raw"),
+                24,
+            ),
+            Icon::new(
+                "sunset",
+                include_bytes!("../../../images/assets/tabler-icon-sunset.raw"),
+                24,
+            ),
+        ];
         Self { map }
     }
 
