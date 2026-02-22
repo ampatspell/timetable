@@ -6,8 +6,9 @@ use pix::{
 };
 use png_pong::{Decoder, Step};
 use std::{
-    fs::{self, File},
+    fs::{self, File, read_dir},
     io::Write,
+    path::PathBuf,
 };
 
 type Raster8 = Raster<Pix4<Ch8, Rgb, Straight, Srgb>>;
@@ -67,12 +68,29 @@ pub fn write_raw(name: &str, buffer: &Vec<u8>) -> () {
 }
 
 pub fn process(name: &str) -> () {
+    println!("{}", name);
     let raster = load_raster(name);
     let buffer = create_raw(raster);
     write_raw(name, &buffer);
 }
 
 fn main() {
-    // let args: Vec<String> = env::args().collect();
-    process("tabler-icon-sun");
+    let dir = read_dir("assets").unwrap();
+    dir.for_each(|f| {
+        let file = f.unwrap();
+        if file.file_type().unwrap().is_file() {
+            let filename = file.file_name();
+            let path = PathBuf::from(filename.to_os_string());
+            let extension = path.extension();
+            match extension {
+                Some(extension) => {
+                    if extension == "png" {
+                        let name = path.file_prefix().unwrap().to_str().unwrap();
+                        process(&name);
+                    }
+                }
+                None => (),
+            }
+        }
+    });
 }
