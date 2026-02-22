@@ -1,9 +1,4 @@
 {
-  "cSpell.words": [
-    "defmt",
-    "Pico",
-    "pixelcolor",
-    "PROFONT"
-  ],
+  "cSpell.words": ["defmt", "Pico", "pixelcolor", "PROFONT", "tabler"],
   "editor.formatOnSave": true
 }

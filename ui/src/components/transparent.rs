@@ -47,8 +47,7 @@ use embedded_graphics::{
 ///
 /// # Ok::<(), core::convert::Infallible>(())
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[cfg_attr(feature = "defmt", derive(::defmt::Format))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ::defmt::Format)]
 pub struct ImageTransparent<T: ImageDrawable> {
     source: T,
     transparent_color: T::Color,
