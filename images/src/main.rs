@@ -14,6 +14,7 @@ type Raster8 = Raster<Pix4<Ch8, Rgb, Straight, Srgb>>;
 
 pub fn path_for(name: &str, ext: &str) -> String {
     let path = format!("assets/{}.{}", name, ext);
+
     path
 }
 
