@@ -1,0 +1,9 @@
+[package]
+edition = "2024"
+name = "images"
+version = "0.1.0"
+
+[dependencies]
+png_pong = "0.10.0"
+pix = "0.14.0"
+rgb565 = "0.1.3"

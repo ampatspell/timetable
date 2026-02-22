@@ -1,7 +1,9 @@
 use embedded_graphics::pixelcolor::Rgb565;
 
+pub mod image;
 pub mod schedule;
 pub mod temperature;
+pub mod transparent;
 pub mod utils;
 
 // https://rgbcolorpicker.com/565
