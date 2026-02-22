@@ -2126,6 +2126,7 @@ dependencies = [
  "no_std_strings",
  "profont",
  "ryu",
+ "static_cell",
 ]
 
 [[package]]

@@ -39,6 +39,7 @@ pub fn load_raster(name: &str) -> Raster8 {
 
 pub fn alpha_to_565(alpha: f32) -> u16 {
     let value = (255. * alpha) as u8;
+    // let value = if a > 127 { 255 } else { 0 };
     rgb565::Rgb565::from_rgb888_components(value, value, value).to_rgb565()
 }
 

@@ -9,5 +9,5 @@ pub mod utils;
 
 // https://rgbcolorpicker.com/565
 
-pub const BACKGROUND_COLOR: Rgb565 = Rgb565::new(7, 13, 7);
-pub const TEXT_COLOR: Rgb565 = Rgb565::new(30, 61, 30);
+pub const BACKGROUND_COLOR: Rgb565 = Rgb565::new(28, 37, 27);
+pub const TEXT_COLOR: Rgb565 = Rgb565::new(31, 63, 31);

@@ -1,77 +1,37 @@
 use embedded_graphics::{
     Pixel,
     image::ImageDrawable,
-    prelude::{Dimensions, DrawTarget, OriginDimensions, Size},
+    prelude::{Dimensions, DrawTarget, OriginDimensions, PixelColor, Size},
     primitives::Rectangle,
 };
 
-/// A wrapper to add basic transparency to an `ImageDrawable`.
-///
-/// `ImageTransparent` works by designating one color in the source
-/// [`ImageDrawable`] as being transparent. All pixels with this color are
-/// skipped during drawing, while all other pixels remain unchanged.
-///
-/// # Performance
-///
-/// When this wrapper is used, the image is drawn pixel by pixel to allow
-/// transparent pixels to be skipped. This can have a negative impact on
-/// performance.
-///
-/// # Examples
-///
-/// ```
-/// use embedded_graphics::{
-///     image::{Image, ImageRaw, ImageTransparent},
-///     pixelcolor::Gray8,
-///     prelude::*,
-/// };
-/// # use embedded_graphics::mock_display::MockDisplay as Display;
-///
-/// let mut display: Display<Gray8> = Display::default();
-///
-/// // Source image without transparency.
-/// let data = [
-///     0x00, 0x00, 0xF8, 0x00, //
-///     0x07, 0xE0, 0xFF, 0xE0, //
-///     0x00, 0x1F, 0x07, 0xFF, //
-///     0xF8, 0x1F, 0xFF, 0xFF, //
-/// ];
-/// let source: ImageRaw<Gray8> = ImageRaw::new(&data, Size::new(4, 4)).unwrap();
-///
-/// // Make all white pixels (`0xFF`) in the source image transparent.
-/// let transparent = ImageTransparent::new(source, Gray8::WHITE);
-///
-/// // Draw the transparent image at `(0, 0)`.
-/// let image = Image::new(&transparent, Point::zero());
-/// image.draw(&mut display)?;
-///
-/// # Ok::<(), core::convert::Infallible>(())
-/// ```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, ::defmt::Format)]
-pub struct ImageTransparent<T: ImageDrawable> {
+pub struct ImageTransparent<'a, T: ImageDrawable> {
     source: T,
     transparent_color: T::Color,
+    process: &'a (dyn ProcessColor<T::Color> + 'a),
 }
 
-impl<T: ImageDrawable> ImageTransparent<T> {
-    /// Creates a new `ImageTransparent` based on a source image.
-    ///
-    /// All pixels with the given transparent color will be skipped during drawing.
-    pub fn new(source: T, transparent_color: T::Color) -> Self {
+impl<'a, T: ImageDrawable> ImageTransparent<'a, T> {
+    pub fn new(
+        source: T,
+        transparent_color: T::Color,
+        process: &'a (dyn ProcessColor<T::Color> + 'a),
+    ) -> Self {
         ImageTransparent {
             source,
             transparent_color,
+            process,
         }
     }
 }
 
-impl<T: ImageDrawable> OriginDimensions for ImageTransparent<T> {
+impl<'a, T: ImageDrawable> OriginDimensions for ImageTransparent<'a, T> {
     fn size(&self) -> Size {
         self.source.size()
     }
 }
 
-impl<T: ImageDrawable> ImageDrawable for ImageTransparent<T> {
+impl<'a, T: ImageDrawable> ImageDrawable for ImageTransparent<'a, T> {
     type Color = T::Color;
 
     fn draw<D>(&self, target: &mut D) -> Result<(), D::Error>
@@ -81,6 +41,7 @@ impl<T: ImageDrawable> ImageDrawable for ImageTransparent<T> {
         let mut draw_target = TransparentDrawTarget {
             target,
             transparent_color: self.transparent_color,
+            process: self.process,
         };
         self.source.draw(&mut draw_target)
     }
@@ -92,6 +53,7 @@ impl<T: ImageDrawable> ImageDrawable for ImageTransparent<T> {
         let mut draw_target = TransparentDrawTarget {
             target,
             transparent_color: self.transparent_color,
+            process: self.process,
         };
         self.source.draw_sub_image(&mut draw_target, area)
     }
@@ -100,6 +62,7 @@ impl<T: ImageDrawable> ImageDrawable for ImageTransparent<T> {
 struct TransparentDrawTarget<'a, T: DrawTarget> {
     target: &'a mut T,
     transparent_color: T::Color,
+    process: &'a (dyn ProcessColor<T::Color> + 'a),
 }
 
 impl<'a, T: DrawTarget> Dimensions for TransparentDrawTarget<'a, T> {
@@ -116,10 +79,22 @@ impl<'a, T: DrawTarget> DrawTarget for TransparentDrawTarget<'a, T> {
     where
         I: IntoIterator<Item = Pixel<Self::Color>>,
     {
+        let process = self.process;
         self.target.draw_iter(
             pixels
                 .into_iter()
-                .filter(|pixel| pixel.1 != self.transparent_color),
+                .filter(|pixel| pixel.1 != self.transparent_color)
+                .map(|pixel| {
+                    let color = process.process_color(pixel.1);
+                    Pixel {
+                        0: pixel.0,
+                        1: color,
+                    }
+                }),
         )
     }
+}
+
+pub trait ProcessColor<C: PixelColor> {
+    fn process_color(&self, color: C) -> C;
 }

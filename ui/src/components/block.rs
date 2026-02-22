@@ -19,8 +19,7 @@ pub struct Block<'a> {
 }
 
 impl<'a> Block<'a> {
-    pub fn new(icon: &'a str) -> Self {
-        let lines = [str32::from("Hello"), str32::new()];
+    pub fn new(icon: &'a str, lines: [str32; 2]) -> Self {
         Self { icon, lines }
     }
     pub fn draw_at(
@@ -33,14 +32,20 @@ impl<'a> Block<'a> {
             .icons
             .draw_at(display, self.icon, origin.add(Point::new(0, 0)));
 
-        let _ = draw_text(
-            display,
-            origin.add(Point::new(30, -4)),
-            &self.lines[0],
-            &PROFONT_18_POINT,
-        );
+        let mut point = origin.add(Point::new(30, -4));
+        let mut y = 0;
 
-        24
+        self.lines
+            .iter()
+            .filter(|line| line.len() > 0)
+            .for_each(|line| {
+                let rect = draw_text(display, point, &line, &PROFONT_18_POINT);
+                let size = rect.size;
+                point = point.add(Point::new(0, size.height as i32));
+                y += 24;
+            });
+
+        y
     }
 }
 
@@ -53,12 +58,18 @@ pub struct Blocks<'a> {
 impl<'a> Blocks<'a> {
     pub fn new(origin: Point, icons: &'a Icons<'a>) -> Self {
         let blocks = [
-            Block::new("clock"),
-            Block::new("cloud-snow"),
-            Block::new("sun"),
-            Block::new("sunrise"),
-            Block::new("sunset"),
-            Block::new("bus-stop"),
+            Block::new("clock", [str32::from("01:04:42"), str32::new()]),
+            Block::new(
+                "cloud-snow",
+                [str32::from("-05.70"), str32::from("Snow grains falling.")],
+            ),
+            Block::new("sun", [str32::from("01"), str32::new()]),
+            Block::new("sunrise", [str32::from("06:39:10"), str32::new()]),
+            Block::new("sunset", [str32::from("03:11:45"), str32::new()]),
+            Block::new(
+                "bus-stop",
+                [str32::from("01:12:00 -02m"), str32::from("01:28:00 +30s")],
+            ),
         ];
         let context = BlockContext { icons };
         Self {
