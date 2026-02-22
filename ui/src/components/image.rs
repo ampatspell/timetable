@@ -1,4 +1,8 @@
-use embedded_graphics::{image::ImageRawLE, pixelcolor::Rgb565, prelude::*};
+use embedded_graphics::{
+    image::{Image, ImageRawLE},
+    pixelcolor::Rgb565,
+    prelude::*,
+};
 
 use crate::{Display, components::transparent::ImageTransparent};
 
@@ -8,6 +12,8 @@ pub fn draw_image(display: &mut impl Display) -> () {
         24,
     );
 
-    let image = ImageTransparent::new(raw, Rgb565::BLACK);
+    let transparent = ImageTransparent::new(raw, Rgb565::BLACK);
+    let image = Image::new(&transparent, Point::new(10, 10));
+
     image.draw(display).ok();
 }

@@ -1,5 +1,6 @@
 use embedded_graphics::pixelcolor::Rgb565;
 
+pub mod block;
 pub mod image;
 pub mod schedule;
 pub mod temperature;
