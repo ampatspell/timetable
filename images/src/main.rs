@@ -26,11 +26,13 @@ pub fn load_raster(name: &str) -> Raster8 {
         .expect("No frames in PNG")
         .expect("PNG parsing error");
 
-    match raster {
+    let rgba8 = match raster {
         png_pong::PngRaster::Rgba8(raster) => Some(raster),
         _ => None,
     }
-    .expect("Not Rgba8 PNG")
+    .expect("Not Rgba8 PNG");
+
+    rgba8
 }
 
 pub fn alpha_to_565(alpha: f32) -> u16 {
