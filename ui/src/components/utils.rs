@@ -66,3 +66,16 @@ pub fn invert(color: Rgb888) -> Rgb888 {
     let b = calc(color.b());
     Rgb888::new(r, g, b)
 }
+
+pub fn blend(bg: Rgb888, fg: Rgb888, alpha: u8) -> Rgb888 {
+    let calc = |bg: u8, fg: u8| {
+        let a = fg as u32 * alpha as u32;
+        let b = bg as u32 * (255 - alpha as u32);
+        (a + b) / 255
+    };
+    let r = calc(bg.r(), fg.r());
+    let g = calc(bg.g(), fg.g());
+    let b = calc(bg.b(), fg.b());
+
+    Rgb888::new(r as u8, g as u8, b as u8)
+}

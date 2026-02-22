@@ -11,6 +11,7 @@ use crate::{
     components::{
         BACKGROUND_COLOR,
         alpha::{ImageAlpha, ProcessPixel},
+        utils::blend,
     },
 };
 
@@ -112,12 +113,4 @@ impl ProcessPixel<Rgb565> for BlendInBackground {
     fn process_color(&self, alpha: u8) -> Rgb565 {
         Rgb565::from(blend(self.background, Rgb888::WHITE, 255 - alpha))
     }
-}
-
-fn blend(bg: Rgb888, fg: Rgb888, alpha: u8) -> Rgb888 {
-    let r = ((fg.r() as u32 * alpha as u32) + (bg.r() as u32 * (255 - alpha as u32))) / 255;
-    let g = ((fg.g() as u32 * alpha as u32) + (bg.g() as u32 * (255 - alpha as u32))) / 255;
-    let b = ((fg.b() as u32 * alpha as u32) + (bg.b() as u32 * (255 - alpha as u32))) / 255;
-
-    Rgb888::new(r as u8, g as u8, b as u8)
 }
