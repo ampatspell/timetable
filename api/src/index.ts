@@ -3,7 +3,8 @@ import Router from '@koa/router';
 import { fetchWeather } from './weather.js';
 import { loadTimetable } from './timetable/index.js';
 import dedent from 'dedent';
-import { asString, createNow, formatSeconds } from './utils.js';
+import { asString, createNow, formatSeconds, formatTime } from './utils.js';
+import { TZDate, tzOffset } from '@date-fns/tz';
 
 const router = new Router();
 
@@ -67,7 +68,7 @@ router.get('/timetable', async (ctx) => {
       });
       ctx.body = timetable.map(item => {
         let time = item.time;
-        let delay = item.delay;;
+        let delay = item.delay;
         return `${time} ${formatSeconds(delay)}`;
       }).join('\n');
   } else {
@@ -95,4 +96,3 @@ app.listen(3000);
 //   });
 //   console.log(t);
 // })()
-

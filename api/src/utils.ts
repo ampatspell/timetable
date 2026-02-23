@@ -48,13 +48,23 @@ export const formatDate = (date: TZDate) => {
 
 export const formatTime = (date: TZDate | undefined) => {
   if(date) {
-    return format(date, 'HH:mm:ss zzzz', { in: tz('Europe/Riga') });
+    return format(date, 'HH:mm:ss zzzz');
   }
 }
 
-export const parse = (date: string | undefined, timezone?: string) => {
+export const parse = (date: string | undefined) => {
   if(date) {
-    return new TZDate(date, 'Europe/Riga');
+    const parsed = new Date(date);
+    return new TZDate(
+      parsed.getFullYear(),
+      parsed.getMonth(),
+      parsed.getDate(),
+      parsed.getHours(),
+      parsed.getMinutes(),
+      parsed.getSeconds(),
+      parsed.getMilliseconds(),
+      'Europe/Riga'
+    );
   }
 }
 
