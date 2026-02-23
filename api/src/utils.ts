@@ -48,7 +48,7 @@ export const formatDate = (date: TZDate) => {
 
 export const formatTime = (date: TZDate | undefined) => {
   if(date) {
-    return format(date, 'HH:mm:ss zzzz');
+    return format(date, 'HH:mm:ss');
   }
 }
 
