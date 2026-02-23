@@ -41,13 +41,11 @@ pub async fn display_task(opts: DisplayTaskOptions) {
     loop {
         let message = CHANNEL.receive().await;
         match message {
-            Messages::Update { payload } => {
-                ui.draw(&mut display);
-            }
             Messages::Ping { .. } => {
                 ui.update();
                 ui.draw(&mut display);
             }
+            Messages::Time { time } => {}
         };
     }
 }
