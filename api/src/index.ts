@@ -8,6 +8,7 @@ import { asString, createNow, formatSeconds } from './utils.js';
 const router = new Router();
 
 router.get('/weather', async (ctx) => {
+  // lat=56.95570916409245&lng=24.12422103404933
   let lat = asString(ctx.query['lat']);
   let lng = asString(ctx.query['lng']);
   if(lat && lng) {

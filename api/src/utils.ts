@@ -70,6 +70,7 @@ export const replaceDate = (a: TZDate | undefined, b: TZDate | undefined) => {
 }
 
 export const formatSeconds = (seconds: number) => {
+  console.log(seconds);
     let sign = seconds < 0 ? '-' : '';
     seconds = Math.abs(seconds);
     if(seconds === 0) {
@@ -85,9 +86,8 @@ export const formatSeconds = (seconds: number) => {
 
 export const formatDiff = (a: TZDate | undefined, b: TZDate | undefined) => {
   if(a && b) {
-    let seconds = differenceInSeconds(a, b);
-    return formatSeconds(seconds);
+    return formatSeconds(differenceInSeconds(a, b));
   }
 }
 
-export const createNow = () => new TZDate(new Date(), 'Europe/Riga');
+export const createNow = () => new TZDate(new Date()).withTimeZone('Europe/Riga');
