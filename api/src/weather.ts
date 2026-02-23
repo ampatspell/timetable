@@ -1,15 +1,15 @@
+import { TZDate } from "@date-fns/tz";
+import { createNow, formatDiff, formatTime, parse, replaceDate as replaceTime, formatDate } from "./utils.js";
 import { wmoForCode } from "./wmo.js";
 
-export const fetchWeather = async () => {
-  let lat = 56.95;
-  let lng = 24.11;
-
+export const fetchWeather = async (lat: string, lng: string) => {
   let props = {
     latitude: lat,
     longitude: lng,
     current_weather: true,
     wind_speed_unit: 'kmh',
-    daily: ['uv_index_max', 'uv_index_clear_sky_max', 'sunrise', 'sunset']
+    daily: ['uv_index_max', 'uv_index_clear_sky_max', 'sunrise', 'sunset'],
+    past_days: 1
   }
 
   let query = Object.keys(props).reduce<string[]>((arr, key) => {
@@ -23,15 +23,48 @@ export const fetchWeather = async () => {
   const res = await fetch(`https://api.open-meteo.com/v1/forecast?${query}`);
   const json = await res.json();
   const current = json.current_weather;
-  console.log(json);
-  return {
-    temperature: {
-      value: current.temperature,
-      description: wmoForCode(current.weathercode as number),
-    },
-    wind:  {
-      speed: current.windspeed,
-      direction: current.winddirection,
+  const daily = json.daily;
+
+  let now = formatDate(createNow());
+  let index = daily.time.indexOf(now);
+
+  let temperature = {
+    value: current.temperature,
+    description: wmoForCode(current.weathercode as number),
+  };
+
+  let uv = {
+    max: daily.uv_index_max[index],
+    clearSkyMax: daily.uv_index_clear_sky_max[index],
+  };
+
+  let createSunrise = () => {
+    let date = parse(daily.sunrise[index]);
+    let yesterday = parse(daily.sunrise[index-1]);
+    return {
+      time: formatTime(date),
+      diff: formatDiff(date, replaceTime(date, yesterday)),
+    };
+  }
+
+  let sunrise = createSunrise()
+
+  let createSunset = () => {
+    console.log(daily.sunset);
+    let date = parse(daily.sunset[index]);
+    let yesterday = parse(daily.sunset[index - 1]);
+    return {
+      time: formatTime(date),
+      diff: formatDiff(date, replaceTime(date, yesterday))
     }
+  }
+
+  let sunset = createSunset();
+
+  return {
+    temperature,
+    uv,
+    sunrise,
+    sunset
   };
 }
