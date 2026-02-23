@@ -54,7 +54,7 @@ export const formatTime = (date: TZDate | undefined) => {
 
 export const parse = (date: string | undefined) => {
   if(date) {
-    return new TZDate(date, 'Europe/Riga');
+    return new TZDate(date).withTimeZone('Europe/Riga');
   }
 }
 
@@ -70,7 +70,6 @@ export const replaceDate = (a: TZDate | undefined, b: TZDate | undefined) => {
 }
 
 export const formatSeconds = (seconds: number) => {
-  console.log(seconds);
     let sign = seconds < 0 ? '-' : '';
     seconds = Math.abs(seconds);
     if(seconds === 0) {
