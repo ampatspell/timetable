@@ -52,9 +52,9 @@ export const formatTime = (date: TZDate | undefined) => {
   }
 }
 
-export const parse = (date: string | undefined) => {
+export const parse = (date: string | undefined, timezone?: string) => {
   if(date) {
-    return new TZDate(date).withTimeZone('Europe/Riga');
+    return new TZDate(date, 'Europe/Riga').withTimeZone('Europe/Riga');
   }
 }
 
