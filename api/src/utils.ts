@@ -1,4 +1,4 @@
-import { TZDate } from "@date-fns/tz";
+import { tz, TZDate } from "@date-fns/tz";
 import { differenceInMinutes, differenceInSeconds, format, set } from "date-fns";
 
 export type SortDescriptor<T> = {
@@ -43,20 +43,18 @@ export const asString = (arg: string | string[] | undefined) => {
 }
 
 export const formatDate = (date: TZDate) => {
-  return format(date, 'yyyy-MM-dd');
+  return format(date, 'yyyy-MM-dd', { in: tz('Europe/Riga') });
 }
 
 export const formatTime = (date: TZDate | undefined) => {
   if(date) {
-    return format(date, 'HH:mm:ss');
+    return format(date, 'HH:mm:ss', { in: tz('Europe/Riga') });
   }
 }
 
 export const parse = (date: string | undefined, timezone?: string) => {
   if(date) {
-    const parsed = new TZDate(date, 'Europe/Riga').withTimeZone('Europe/Riga');
-    console.log(parsed);
-    return parsed;
+    return new TZDate(date, 'Europe/Riga').withTimeZone('Europe/Riga');
   }
 }
 
