@@ -47,10 +47,9 @@ export const fetchWeather = async (lat: string, lng: string) => {
     };
   }
 
-  let sunrise = createSunrise()
+  let sunrise = createSunrise();
 
   let createSunset = () => {
-    console.log(daily.sunset);
     let date = parse(daily.sunset[index]);
     let yesterday = parse(daily.sunset[index - 1]);
     return {
