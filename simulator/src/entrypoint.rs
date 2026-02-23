@@ -6,6 +6,7 @@ pub fn main_loop(display: &mut SimulatorDisplay<Rgb565>, window: &mut Window) ->
     let mut ui = UI::new();
     ui.prepare(display);
     loop {
+        ui.update();
         ui.draw(display);
         window.update(&display);
 

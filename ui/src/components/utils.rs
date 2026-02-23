@@ -2,7 +2,6 @@ use crate::{
     Display,
     components::{BACKGROUND_COLOR, TEXT_COLOR},
 };
-use chrono::{TimeZone, Utc};
 use embedded_graphics::{
     mono_font::{MonoFont, MonoTextStyleBuilder},
     pixelcolor::Rgb888,

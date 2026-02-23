@@ -75,7 +75,6 @@ impl<'a> Icons<'a> {
 
 pub struct Icon<'a> {
     pub name: &'a str,
-    // image: ProcessedImage<'a, ImageRaw<'a, Rgb565, LittleEndian>>,
     image: ImageAlpha<'a>,
 }
 
