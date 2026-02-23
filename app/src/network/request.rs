@@ -6,6 +6,7 @@ use embassy_net::tcp::client::{TcpClient, TcpClientState};
 use embassy_time::{Duration, Timer};
 use no_std_strings::str256;
 use reqwless::client::HttpClient;
+use reqwless::request::Method::GET;
 use ui::payload::TimeData;
 
 #[derive(Debug, Clone)]
@@ -15,18 +16,18 @@ async fn request(stack: &Stack<'static>, path: &str) -> Result<str256, RequestFa
     let dns = DnsSocket::new(*stack);
     let tcp_state = TcpClientState::<1, 4096, 4096>::new();
     let tcp = TcpClient::new(*stack, &tcp_state);
-    let url = str256::from("http://timetable.app.amateurinmotion.com/").push(path);
+    let mut url_str = str256::from("http://timetable.app.amateurinmotion.com/");
+    url_str.push(path);
 
+    let url = url_str.to_str();
+
+    info!("Path {}", path);
     info!("GET {}", url);
 
     let mut client = HttpClient::new(&tcp, &dns);
     let mut buffer = [0u8; 4096];
-    let mut http_req = client
-        .request(reqwless::request::Method::GET, url)
-        .await
-        .unwrap();
-
-    let response = http_req.send(&mut buffer).await.unwrap();
+    let mut http_req = client.request(GET, url).await.expect("HTTP request");
+    let response = http_req.send(&mut buffer).await.expect("HTTP request send");
 
     if response.status.is_successful() {
         let body = response.body().read_to_end().await.unwrap();

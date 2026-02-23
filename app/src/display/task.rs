@@ -45,7 +45,7 @@ pub async fn display_task(opts: DisplayTaskOptions) {
                 ui.update();
                 ui.draw(&mut display);
             }
-            Messages::Time { time } => {}
+            Messages::Time { .. } => {}
         };
     }
 }

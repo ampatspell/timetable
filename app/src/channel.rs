@@ -1,5 +1,5 @@
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, channel::Channel};
-use ui::payload::{Payload, TimeData};
+use ui::payload::TimeData;
 
 pub enum Messages {
     Ping {},

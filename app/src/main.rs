@@ -10,7 +10,7 @@
 use app::{
     configure::{ConfigureResponse, configure},
     display::{ConfigureDisplayOptions, configure_display},
-    network::{ConfigureNetworkOptions, configure_network},
+    network::task::{ConfigureNetworkOptions, configure_network},
 };
 use defmt::info;
 use embassy_executor::Spawner;
