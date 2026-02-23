@@ -1,5 +1,5 @@
 import { TZDate } from "@date-fns/tz";
-import { createNow, formatDiff, formatTime, parse, replaceDate as replaceTime, formatDate } from "./utils.js";
+import { createNow, formatDiff, formatTime, parse, formatDate, resetDate } from "./utils.js";
 import { wmoForCode } from "./wmo.js";
 
 export const fetchWeather = async (lat: string, lng: string) => {
@@ -43,7 +43,7 @@ export const fetchWeather = async (lat: string, lng: string) => {
     let yesterday = parse(daily.sunrise[index-1]);
     return {
       time: formatTime(date),
-      diff: formatDiff(date, replaceTime(date, yesterday)),
+      diff: formatDiff(resetDate(date), resetDate(yesterday)),
     };
   }
 
@@ -54,7 +54,7 @@ export const fetchWeather = async (lat: string, lng: string) => {
     let yesterday = parse(daily.sunset[index - 1]);
     return {
       time: formatTime(date),
-      diff: formatDiff(date, replaceTime(date, yesterday))
+      diff: formatDiff(resetDate(date), resetDate(yesterday))
     }
   }
 

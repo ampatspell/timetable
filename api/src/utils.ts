@@ -1,5 +1,5 @@
 import { TZDate } from "@date-fns/tz";
-import { differenceInMinutes, differenceInSeconds, format } from "date-fns";
+import { differenceInMinutes, differenceInSeconds, format, set } from "date-fns";
 
 export type SortDescriptor<T> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,13 +58,10 @@ export const parse = (date: string | undefined, timezone?: string) => {
   }
 }
 
-export const replaceDate = (a: TZDate | undefined, b: TZDate | undefined) => {
-  if(a && b) {
-    let ret = new TZDate(a);
-    ret.setHours(b.getHours());
-    ret.setMinutes(b.getMinutes());
-    ret.setSeconds(b.getSeconds());
-    ret.setMilliseconds(b.getMilliseconds());
+export const resetDate = (a: TZDate | undefined) => {
+  if(a) {
+    let ret = new TZDate(a, 'UTC');
+    ret = set(ret, { year: 0, month: 0, date: 1 });
     return ret;
   }
 }
