@@ -1,5 +1,5 @@
 import { tz, TZDate } from "@date-fns/tz";
-import { differenceInMinutes, differenceInSeconds, format, set } from "date-fns";
+import { differenceInSeconds, format, set } from "date-fns";
 
 export type SortDescriptor<T> = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,7 +54,8 @@ export const formatTime = (date: TZDate | undefined) => {
 
 export const parse = (date: string | undefined, timezone?: string) => {
   if(date) {
-    return new TZDate(date, 'Europe/Riga').withTimeZone('Europe/Riga');
+    return tz('Europe/Riga')(date);
+    // return new TZDate(date, 'Europe/Riga').withTimeZone('Europe/Riga');
   }
 }
 
