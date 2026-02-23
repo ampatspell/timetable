@@ -54,7 +54,9 @@ export const formatTime = (date: TZDate | undefined) => {
 
 export const parse = (date: string | undefined, timezone?: string) => {
   if(date) {
-    return new TZDate(date, 'Europe/Riga').withTimeZone('Europe/Riga');
+    const parsed = new TZDate(date, 'Europe/Riga').withTimeZone('Europe/Riga');
+    console.log(parsed);
+    return parsed;
   }
 }
 

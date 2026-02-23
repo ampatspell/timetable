@@ -25,6 +25,8 @@ export const fetchWeather = async (lat: string, lng: string) => {
   const current = json.current_weather;
   const daily = json.daily;
 
+console.log(json);
+
   let now = formatDate(createNow());
   let index = daily.time.indexOf(now);
 
