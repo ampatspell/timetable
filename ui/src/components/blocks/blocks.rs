@@ -47,7 +47,6 @@ impl<'a> Blocks<'a> {
             if result.needs_layout {
                 force = true;
             }
-            info!("Heelo");
         });
     }
 
