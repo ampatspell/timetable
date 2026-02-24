@@ -110,6 +110,12 @@ router.get('/font', async (ctx) => {
           padding: 25px;
         }
 
+        .measure {
+          display: flex;
+          flex-direction: row;
+          width: min-content;
+        }
+
         .content {
           display: flex;
           flex-direction: row;
