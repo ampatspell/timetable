@@ -1,7 +1,9 @@
 [package]
+edition = "2024"
 name = "font"
 version = "0.1.0"
-edition = "2024"
 
 [dependencies]
 headless_chrome = "1.0.21"
+pix = "0.14.0"
+png_pong = "0.10.0"

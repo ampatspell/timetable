@@ -106,14 +106,16 @@ router.get('/font', async (ctx) => {
           padding: 25px;
           font-family: 'Ubuntu Mono';
           font-size: ${fontSize}px;
+          display: flex;
+          flex-direction: row;
         }
       </style>
       </head>
       <body>
         <div class="content">
           <div class="row numbers"></div>
-          <div class="row lowercase"></div>
           <div class="row uppercase"></div>
+          <div class="row lowercase"></div>
         </div>
         <script>
           console.log('Hello');
