@@ -96,16 +96,21 @@ router.get('/font', async (ctx) => {
 
       <style>
         html, body {
-          padding: 0;
           margin: 0;
           background: #fff;
           color: #000;
+          font-family: 'Ubuntu Mono';
+          font-size: ${fontSize}px;
+        }
+
+        body {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          padding: 25px;
         }
 
         .content {
-          padding: 25px;
-          font-family: 'Ubuntu Mono';
-          font-size: ${fontSize}px;
           display: flex;
           flex-direction: row;
         }
@@ -117,8 +122,8 @@ router.get('/font', async (ctx) => {
           <div class="row uppercase"></div>
           <div class="row lowercase"></div>
         </div>
+        <div class="measure">M</div>
         <script>
-          console.log('Hello');
           window.addEventListener('DOMContentLoaded', () => {
             let numbers = '01234456789';
             let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';

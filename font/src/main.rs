@@ -10,7 +10,7 @@ use pix::{
 };
 use png_pong::Decoder;
 
-type Rgba8Raster = pix::Raster<Pix4<Ch8, Rgb, Straight, Srgb>>;
+type Raster8 = pix::Raster<Pix4<Ch8, Rgb, Straight, Srgb>>;
 
 pub fn create_png(font_size: u16) -> Vec<u8> {
     let args = vec![OsStr::new(
@@ -41,7 +41,7 @@ pub fn create_png(font_size: u16) -> Vec<u8> {
     screenshot
 }
 
-pub fn load_raster(png: Vec<u8>) -> Rgba8Raster {
+pub fn load_raster(png: Vec<u8>) -> Raster8 {
     let arr = png.as_slice();
     let decoder = Decoder::new(arr).unwrap();
     let step = decoder.into_steps().last().unwrap().unwrap();
@@ -55,7 +55,10 @@ pub fn load_raster(png: Vec<u8>) -> Rgba8Raster {
     rgba8
 }
 
-pub fn split_raster(raster: Rgba8Raster) {}
+pub fn split_raster(raster: Raster8) {
+    let ox = 25;
+    let oy = 25;
+}
 
 fn main() {
     let font_size = 20;

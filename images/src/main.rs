@@ -1,6 +1,6 @@
 use pix::{
     Raster,
-    chan::{Ch8, Channel, Srgb, Straight},
+    chan::{Ch8, Srgb, Straight},
     el::{Pix4, Pixel},
     rgb::Rgb,
 };
@@ -37,31 +37,31 @@ pub fn load_raster(name: &str) -> Raster8 {
     rgba8
 }
 
-pub fn alpha_to_565(alpha: f32) -> u16 {
-    let value = (255. * alpha) as u8;
-    // let value = if a > 127 { 255 } else { 0 };
-    rgb565::Rgb565::from_rgb888_components(value, value, value).to_rgb565()
-}
+// pub fn alpha_to_565(alpha: f32) -> u16 {
+//     let value = (255. * alpha) as u8;
+//     // let value = if a > 127 { 255 } else { 0 };
+//     rgb565::Rgb565::from_rgb888_components(value, value, value).to_rgb565()
+// }
 
-pub fn create_raw(raster: &Raster8) -> Vec<u8> {
-    let width = raster.width();
-    let height = raster.height();
+// pub fn create_raw(raster: &Raster8) -> Vec<u8> {
+//     let width = raster.width();
+//     let height = raster.height();
 
-    let mut buffer = Vec::<u8>::new();
+//     let mut buffer = Vec::<u8>::new();
 
-    for y in 0..height {
-        for x in 0..width {
-            let pixel = raster.pixel(x.try_into().unwrap(), y.try_into().unwrap());
-            let alpha = pixel.alpha().to_f32();
-            let value = alpha_to_565(alpha);
-            let [a, b] = value.to_le_bytes();
-            buffer.push(a);
-            buffer.push(b);
-        }
-    }
+//     for y in 0..height {
+//         for x in 0..width {
+//             let pixel = raster.pixel(x.try_into().unwrap(), y.try_into().unwrap());
+//             let alpha = pixel.alpha().to_f32();
+//             let value = alpha_to_565(alpha);
+//             let [a, b] = value.to_le_bytes();
+//             buffer.push(a);
+//             buffer.push(b);
+//         }
+//     }
 
-    buffer
-}
+//     buffer
+// }
 
 pub fn create_alpha(raster: &Raster8) -> Vec<u8> {
     let width = raster.width();
