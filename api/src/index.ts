@@ -83,6 +83,60 @@ router.get('/health', async (ctx) => {
   ctx.body = { ok: true };
 });
 
+router.get('/font', async (ctx) => {
+  let fontSize = asString(ctx.query['font-size']) ?? '20';
+  ctx.headers['content-type'] = 'text/html';
+  ctx.body = dedent`
+    <!doctype html>
+    <html lang="en">
+    <head>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+      <style>
+        html, body {
+          padding: 0;
+          margin: 0;
+          background: #fff;
+          color: #000;
+        }
+
+        .content {
+          padding: 25px;
+          font-family: 'Ubuntu Mono';
+          font-size: ${fontSize}px;
+        }
+      </style>
+      </head>
+      <body>
+        <div class="content">
+          <div class="row numbers"></div>
+          <div class="row lowercase"></div>
+          <div class="row uppercase"></div>
+        </div>
+        <script>
+          console.log('Hello');
+          window.addEventListener('DOMContentLoaded', () => {
+            let numbers = '01234456789';
+            let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';
+            let uppercase = lowercase.toUpperCase();
+
+            let body = document.body;
+            body.querySelector('.row.numbers').textContent = numbers;
+            body.querySelector('.row.lowercase').textContent = lowercase;
+            body.querySelector('.row.uppercase').textContent = uppercase;
+
+            let done = document.createElement('div');
+            done.className = "done";
+            body.append(done);
+          });
+        </script>
+      </body>
+    </html>
+  `;
+});
+
 const app = new Koa();
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(3000);
