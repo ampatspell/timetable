@@ -135,7 +135,7 @@ router.get('/font', async (ctx) => {
             let numbers = '0123456789';
             let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';
             let uppercase = lowercase.toUpperCase();
-            let special = '°';
+            let special = '+-°';
 
             let body = document.body;
             body.querySelector('.row.numbers').textContent = numbers;
