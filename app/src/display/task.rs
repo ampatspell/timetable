@@ -5,7 +5,7 @@ use crate::{
 use defmt::info;
 use embassy_time::{Duration, Timer};
 use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
-use ui::draw::UI;
+use ui::ui::UI;
 
 pub struct DisplayTaskOptions {
     pub spi: Spi<'static, Blocking>,
