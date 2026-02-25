@@ -1,6 +1,12 @@
 use embedded_graphics::{
-    Pixel, image::ImageDrawable, pixelcolor::Rgb565, prelude::*, primitives::Rectangle,
+    Pixel,
+    image::ImageDrawable,
+    pixelcolor::{Rgb565, Rgb888},
+    prelude::*,
+    primitives::Rectangle,
 };
+
+use crate::components::{BACKGROUND_COLOR, utils::blend};
 
 pub struct ImageAlpha<'a> {
     width: u32,
@@ -106,4 +112,22 @@ fn to_index(point: Point, width: u32) -> u32 {
 
 pub trait ProcessPixel<C: PixelColor> {
     fn process_color(&self, alpha: u8) -> C;
+}
+
+pub struct BlendInBackground {
+    background: Rgb888,
+}
+
+impl BlendInBackground {
+    pub fn new() -> Self {
+        Self {
+            background: Rgb888::from(BACKGROUND_COLOR),
+        }
+    }
+}
+
+impl ProcessPixel<Rgb565> for BlendInBackground {
+    fn process_color(&self, alpha: u8) -> Rgb565 {
+        Rgb565::from(blend(self.background, Rgb888::WHITE, 255 - alpha))
+    }
 }

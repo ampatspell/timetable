@@ -2,6 +2,7 @@ use embedded_graphics::pixelcolor::Rgb565;
 
 pub mod alpha;
 pub mod blocks;
+pub mod fonts;
 pub mod icons;
 pub mod schedule;
 pub mod temperature;

@@ -75,34 +75,44 @@ pub fn write_glyph(output: Raster<SRgba8>, name: &str) {
     fs::write(path, data).unwrap();
 }
 
-pub fn save_glyph(raster: &Raster8, index: u16, ox: u16, oy: u16, width: u16, height: u16) {
+pub fn save_glyph(
+    raster: &Raster8,
+    index: u16,
+    ox: u16,
+    oy: u16,
+    width: u16,
+    height: u16,
+    raw: &mut Vec<u8>,
+) {
     let base_name = format!("font-{width}x{height}");
-    prepare_write_glyphs();
 
-    let mut buffer = Vec::<u8>::new();
     let mut output: Raster<SRgba8> = Raster::with_clear(width as u32, height as u32);
     for (y, row) in output.rows_mut(()).enumerate() {
         for (x, pixel) in row.iter_mut().enumerate() {
             let input = raster.pixel(ox as i32 + x as i32, oy as i32 + y as i32);
             let channels = input.channels();
-            let value = (255. * channels[0].to_f32()) as u8;
+            let value = 255 - (255. * channels[0].to_f32()) as u8;
             *pixel = SRgba8::new(value, value, value, 255);
-            buffer.push(value);
+            raw.push(value);
         }
     }
     write_glyph(output, format!("{base_name}-{index}").as_str());
-    fs::write(format!("{OUT}/{base_name}.raw"), buffer).unwrap();
 }
 
 pub fn split_raster(raster: Raster8, def: Definition, glyphs: u16) {
+    prepare_write_glyphs();
+
     let ox = 25;
     let y = 25;
     let width = def.width;
     let height = def.height;
+    let mut raw = Vec::<u8>::new();
     for index in 0..glyphs {
         let x = ox + (index * (def.width + def.padding));
-        save_glyph(&raster, index, x, y, width, height);
+        save_glyph(&raster, index, x, y, width, height, &mut raw);
     }
+    let base_name = format!("font-{width}x{height}");
+    fs::write(format!("{OUT}/{base_name}.raw"), raw).unwrap();
 }
 
 pub struct Definition {
@@ -113,7 +123,7 @@ pub struct Definition {
 }
 
 fn main() {
-    let glyphs: u16 = 86;
+    let glyphs: u16 = 85;
     let definition = Definition {
         font_size: 20,
         width: 10,

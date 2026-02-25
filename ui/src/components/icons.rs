@@ -1,28 +1,22 @@
 use defmt::info;
-use embedded_graphics::{
-    image::Image,
-    pixelcolor::{Rgb565, Rgb888},
-    prelude::*,
-};
+use embedded_graphics::{image::Image, pixelcolor::Rgb565, prelude::*};
 use static_cell::StaticCell;
 
 use crate::{
     Display,
-    components::{
-        BACKGROUND_COLOR,
-        alpha::{ImageAlpha, ProcessPixel},
-        utils::blend,
-    },
+    components::alpha::{BlendInBackground, ImageAlpha, ProcessPixel},
 };
 
 pub struct Icons<'a> {
     map: [Icon<'a>; 6],
 }
-static PROCESS: StaticCell<BlendInBackground> = StaticCell::new();
 
 impl<'a> Icons<'a> {
     pub fn new() -> Self {
-        let process = PROCESS.uninit().write(BlendInBackground::new());
+        let process = {
+            static CELL: StaticCell<BlendInBackground> = StaticCell::new();
+            CELL.init(BlendInBackground::new())
+        };
         let map = [
             Icon::new(
                 "bus-stop",
@@ -93,23 +87,5 @@ impl<'a> Icon<'a> {
         let image = Image::new(&self.image, position);
         let result = image.draw(display);
         result.ok();
-    }
-}
-
-pub struct BlendInBackground {
-    background: Rgb888,
-}
-
-impl BlendInBackground {
-    pub fn new() -> Self {
-        Self {
-            background: Rgb888::from(BACKGROUND_COLOR),
-        }
-    }
-}
-
-impl ProcessPixel<Rgb565> for BlendInBackground {
-    fn process_color(&self, alpha: u8) -> Rgb565 {
-        Rgb565::from(blend(self.background, Rgb888::WHITE, 255 - alpha))
     }
 }

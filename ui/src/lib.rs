@@ -6,8 +6,8 @@ use embedded_graphics::{
 };
 
 pub mod components;
-pub mod draw;
 pub mod payload;
+pub mod ui;
 
 pub trait Display: DrawTarget<Color = Rgb565> + Dimensions {}
 impl<T: DrawTarget<Color = Rgb565> + Dimensions> Display for T {}

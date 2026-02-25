@@ -1,6 +1,6 @@
 use embedded_graphics::pixelcolor::Rgb565;
 use embedded_graphics_simulator::{SimulatorDisplay, SimulatorEvent, Window};
-use ui::draw::UI;
+use ui::ui::UI;
 
 pub fn main_loop(display: &mut SimulatorDisplay<Rgb565>, window: &mut Window) -> () {
     let mut ui = UI::new();

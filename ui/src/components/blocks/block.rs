@@ -6,11 +6,12 @@ use profont::PROFONT_18_POINT;
 
 use crate::{
     Display,
-    components::{icons::Icons, utils::draw_text},
+    components::{fonts::Fonts, icons::Icons, utils::draw_text},
 };
 
 pub struct BlockContext<'a> {
     pub icons: Icons<'a>,
+    pub fonts: Fonts<'a>,
 }
 
 pub struct BlockDrawResult {
