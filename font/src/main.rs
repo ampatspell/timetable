@@ -6,8 +6,8 @@ use headless_chrome::{
 use pix::{
     Raster,
     chan::{Ch8, Channel, Srgb, Straight},
-    el::{Pix4, Pixel},
-    rgb::{Rgb, Rgba8, SRgb8, SRgba8},
+    el::Pixel,
+    rgb::{Rgb, SRgba8},
 };
 use png_pong::{Decoder, Encoder, PngRaster};
 
@@ -20,9 +20,9 @@ pub fn create_png(font_size: u16) -> Vec<u8> {
 
     let browser = Browser::new(
         LaunchOptions::default_builder()
-            .headless(false)
+            .headless(true)
             .args(args)
-            .window_size(Some((1024, 600)))
+            .window_size(Some((1920, 600)))
             .build()
             .unwrap(),
     )
@@ -79,12 +79,11 @@ pub fn save_glyph(raster: &Raster8, index: u16, ox: u16, oy: u16, width: u16, he
     write_glyph(output, index);
 }
 
-pub fn split_raster(raster: Raster8, def: Definition) {
+pub fn split_raster(raster: Raster8, def: Definition, glyphs: u16) {
     let ox = 25;
     let y = 25;
     let width = def.width;
     let height = def.height;
-    let glyphs: u16 = 10 + (2 * 38);
     for index in 0..glyphs {
         let x = ox + (index * (def.width + def.padding));
         save_glyph(&raster, index, x, y, width, height);
@@ -99,6 +98,7 @@ pub struct Definition {
 }
 
 fn main() {
+    let glyphs: u16 = 86;
     let definition = Definition {
         font_size: 20,
         width: 10,
@@ -107,5 +107,5 @@ fn main() {
     };
     let png = create_png(definition.font_size);
     let raster = load_raster(png);
-    split_raster(raster, definition);
+    split_raster(raster, definition, glyphs);
 }
