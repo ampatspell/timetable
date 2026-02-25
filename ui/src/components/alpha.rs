@@ -62,8 +62,8 @@ impl<'a> ImageDrawable for ImageAlpha<'a> {
 pub struct AlphaPixelsIterator<'a> {
     data: &'a [u8],
     width: u32,
-    area: &'a Rectangle,
     point: Point,
+    area: &'a Rectangle,
     process: &'a (dyn ProcessPixel<Rgb565> + 'static),
 }
 
@@ -77,8 +77,8 @@ impl<'a> AlphaPixelsIterator<'a> {
         Self {
             data,
             width,
+            point: area.top_left,
             area,
-            point: Point::new(0, 0),
             process,
         }
     }
@@ -88,23 +88,27 @@ impl<'a> Iterator for AlphaPixelsIterator<'a> {
     type Item = Pixel<Rgb565>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let point = self.point;
+        let current = self.point;
         let width = self.width;
+        let area = self.area;
+        let top_left = area.top_left;
+        let size = area.size;
         let data = self.data;
-        let index = to_index(point, width);
+        let index = to_index(current, width);
 
-        if index > data.len() as u32 - 1 {
+        if current.y > top_left.y + size.height as i32 - 1 {
             return None;
+        }
+
+        if current.x == (size.width - 1) as i32 {
+            self.point = Point::new(top_left.x, current.y + 1);
+        } else {
+            self.point = Point::new(current.x + 1, current.y);
         }
 
         let value = 255 - data[index as usize];
         let color = self.process.process_color(value);
-
-        if point.x == (width - 1) as i32 {
-            self.point = Point::new(0, point.y + 1);
-        } else {
-            self.point = Point::new(point.x + 1, point.y);
-        }
+        let point = Point::new(current.x - top_left.x, current.y - top_left.y);
 
         Some(Pixel { 0: point, 1: color })
     }

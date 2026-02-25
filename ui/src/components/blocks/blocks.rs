@@ -1,3 +1,5 @@
+use core::ops::Add;
+
 use embedded_graphics::prelude::*;
 use no_std_strings::str32;
 
@@ -38,21 +40,21 @@ impl<'a> Blocks<'a> {
     }
 
     pub fn draw(&mut self, display: &mut impl Display) {
-        // let mut y: i32 = 0;
-        // let mut force = false;
-        // self.blocks.iter_mut().for_each(|block| {
-        //     let origin = self.origin.add(Point::new(0, y as i32));
-        //     let result = block.draw_at(display, &self.context, origin, false);
-        //     y = y + result.height;
-        //     if result.needs_layout {
-        //         force = true;
-        //     }
-        // });
-        self.context
-            .fonts
-            .for_size(20)
-            .unwrap()
-            .draw_at(display, 0, Point::new(20, 20));
+        let mut y: i32 = 0;
+        let mut force = false;
+        self.blocks.iter_mut().for_each(|block| {
+            let origin = self.origin.add(Point::new(0, y as i32));
+            let result = block.draw_at(display, &self.context, origin, false);
+            y = y + result.height;
+            if result.needs_layout {
+                force = true;
+            }
+        });
+        // self.context
+        //     .fonts
+        //     .for_size(20)
+        //     .unwrap()
+        //     .draw_at(display, 0, Point::new(20, 20));
     }
 
     pub fn on_time(&mut self) {
