@@ -141,7 +141,7 @@ router.get('/font', async (ctx) => {
             body.querySelector('.row.numbers').textContent = numbers;
             body.querySelector('.row.lowercase').textContent = lowercase;
             body.querySelector('.row.uppercase').textContent = uppercase;
-            body.querySelector('.row.special').textContent = chars;
+            body.querySelector('.row.special').textContent = special;
 
             let done = document.createElement('div');
             done.className = "done";
