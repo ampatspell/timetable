@@ -1,6 +1,7 @@
-use core::ops::Add;
+use core::{iter::Map, ops::Add, str::CharIndices};
 
 use embedded_graphics::{image::Image, prelude::*, primitives::Rectangle};
+use no_std_strings::str32;
 use static_cell::StaticCell;
 
 use crate::{
@@ -146,13 +147,57 @@ impl<'a> Font<'a> {
         }
     }
 
-    pub fn draw_glyph_at(&self, display: &mut impl Display, glyph: u32, position: Point) -> Point {
+    fn map_characters_to_indices(&self, string: &str) -> [u8; 32] {
+        let indices = string.char_indices().map(|(_, string_char)| {
+            let mut string_buffer = [0; 2];
+            string_char.encode_utf8(&mut string_buffer);
+            let mapped = self.mapping.iter().find(|(s, _)| {
+                let first_char = s.chars().next().unwrap();
+                let mut mapping_buffer = [0; 2];
+                first_char.encode_utf8(&mut mapping_buffer);
+                return string_buffer[0] == mapping_buffer[0]
+                    && string_buffer[1] == mapping_buffer[1];
+            });
+            let res = match mapped {
+                Some(f) => f.1,
+                None => 0,
+            };
+
+            res
+        });
+
+        let mut buffer: [u8; 32] = [0; 32];
+        let mut idx = 0;
+        indices.for_each(|i| {
+            buffer[idx] = i;
+            idx += 1;
+        });
+
+        buffer
+    }
+
+    pub fn draw_glyph_at(&self, display: &mut impl Display, glyph: u8, position: Point) -> Point {
         let size = self.size;
-        let rect = Rectangle::new(Point::new(0, (size.height * glyph) as i32), size);
+        let rect = Rectangle::new(Point::new(0, (size.height * glyph as u32) as i32), size);
         let sub = self.image.sub_image(&rect);
         let image = Image::new(&sub, position);
         image.draw(display).ok();
 
         position.add(Point::new(size.width as i32, 0))
+    }
+
+    pub fn draw_string_at(
+        &self,
+        display: &mut impl Display,
+        string: &str,
+        position: Point,
+    ) -> Point {
+        let chars = self.map_characters_to_indices(&string);
+        let mut point = position;
+        chars
+            .iter()
+            .for_each(|index| point = self.draw_glyph_at(display, *index, point));
+
+        point
     }
 }

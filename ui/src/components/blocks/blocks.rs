@@ -51,8 +51,8 @@ impl<'a> Blocks<'a> {
             }
         });
 
-        let font = self.context.fonts.for_size(20).unwrap();
-        let ret = font.draw_glyph_at(display, 0, Point::new(20, 20));
+        // let font = self.context.fonts.for_size(20).unwrap();
+        // let ret = font.draw_string_at(display, "Čau, Maija saule", Point::new(20, 20));
     }
 
     pub fn on_time(&mut self) {
