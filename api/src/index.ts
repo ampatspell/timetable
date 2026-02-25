@@ -132,7 +132,7 @@ router.get('/font', async (ctx) => {
         <div class="measure">M</div>
         <script>
           window.addEventListener('DOMContentLoaded', () => {
-            let numbers = '01234456789';
+            let numbers = '0123456789';
             let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';
             let uppercase = lowercase.toUpperCase();
             let special = '°';
