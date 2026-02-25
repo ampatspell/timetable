@@ -87,11 +87,23 @@ router.get('/font', async (ctx) => {
   let fontSize = asString(ctx.query['font-size']) ?? '20';
   ctx.headers['content-type'] = 'text/html';
 
-  let numbers = '×0123456789';
+  let numbers = ' ×0123456789';
   let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';
   let uppercase = lowercase.toUpperCase();
   let special = '°+-';
-  let glyphs = [...numbers, ...lowercase, ...uppercase, ...special].join('');
+  let array = [...numbers, ...lowercase, ...uppercase, ...special];
+  let glyphs = array.join('');
+
+  let mapping = array.map((g,i) => `("${g}", ${i})`).join(',\n');
+
+  let cell = dedent`
+    let mapping = {
+        static CELL: StaticCell<&[(&str, u8)]> = StaticCell::new();
+        CELL.init(&[
+    ${mapping}
+        ])
+    };
+  `;
 
   ctx.body = dedent`
     <!doctype html>
@@ -127,6 +139,12 @@ router.get('/font', async (ctx) => {
           display: flex;
           flex-direction: row;
         }
+
+        .mapping {
+          font-size: 13px;
+          white-space: pre-wrap;
+          padding: 0;
+        }
       </style>
       </head>
       <body>
@@ -134,6 +152,7 @@ router.get('/font', async (ctx) => {
           <div class="row"></div>
         </div>
         <div class="measure">M</div>
+        <div class="mapping">${cell}</div>
         <script>
           window.addEventListener('DOMContentLoaded', () => {
             let body = document.body;
