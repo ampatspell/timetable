@@ -127,6 +127,7 @@ router.get('/font', async (ctx) => {
           <div class="row numbers"></div>
           <div class="row uppercase"></div>
           <div class="row lowercase"></div>
+          <div class="row special"></div>
         </div>
         <div class="measure">M</div>
         <script>
@@ -134,11 +135,13 @@ router.get('/font', async (ctx) => {
             let numbers = '01234456789';
             let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';
             let uppercase = lowercase.toUpperCase();
+            let special = '°';
 
             let body = document.body;
             body.querySelector('.row.numbers').textContent = numbers;
             body.querySelector('.row.lowercase').textContent = lowercase;
             body.querySelector('.row.uppercase').textContent = uppercase;
+            body.querySelector('.row.special').textContent = chars;
 
             let done = document.createElement('div');
             done.className = "done";

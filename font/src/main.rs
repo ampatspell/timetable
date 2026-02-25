@@ -5,13 +5,13 @@ use headless_chrome::{
 };
 use pix::{
     Raster,
-    chan::{Ch8, Srgb, Straight},
+    chan::{Ch8, Channel, Srgb, Straight},
     el::{Pix4, Pixel},
     rgb::{Rgb, Rgba8, SRgb8, SRgba8},
 };
-use png_pong::{Decoder, Encoder};
+use png_pong::{Decoder, Encoder, PngRaster};
 
-type Raster8 = pix::Raster<Pix4<Ch8, Rgb, Straight, Srgb>>;
+type Raster8 = Raster<pix::el::Pix3<Ch8, Rgb, Straight, Srgb>>;
 
 pub fn create_png(font_size: u16) -> Vec<u8> {
     let args = vec![OsStr::new(
@@ -47,24 +47,36 @@ pub fn load_raster(png: Vec<u8>) -> Raster8 {
     let decoder = Decoder::new(arr).unwrap();
     let step = decoder.into_steps().last().unwrap().unwrap();
     let raster = step.raster;
-    let rgba8 = match raster {
-        png_pong::PngRaster::Rgba8(raster) => Some(raster),
+    let rgb8 = match raster {
+        png_pong::PngRaster::Rgb8(raster) => Some(raster),
         _ => None,
     }
     .unwrap();
 
-    rgba8
+    rgb8
 }
 
-pub fn save_glyph(raster: &Raster8, ox: u16, oy: u16, width: u16, height: u16) {
-    let mut output = Raster::<Rgba8>::with_clear(width as u32, height as u32);
-    for x in 0..width {
-        for y in 0..height {
-            let pixel = raster.pixel((ox + x) as i32, (oy + y) as i32);
-            let alpha = pixel.alpha();
-            let out = output.pixel_mut(x as i32, y as i32);
+pub fn write_glyph(output: Raster<SRgba8>, index: u16) {
+    let raster = PngRaster::Rgba8(output);
+    let mut data = Vec::new();
+    let mut encoder = Encoder::new(&mut data).into_step_enc();
+    let step = png_pong::Step { raster, delay: 0 };
+    encoder.encode(&step).unwrap();
+    let path = format!("out/{index}.png");
+    std::fs::write(path, data).unwrap();
+}
+
+pub fn save_glyph(raster: &Raster8, index: u16, ox: u16, oy: u16, width: u16, height: u16) {
+    let mut output: Raster<SRgba8> = Raster::with_clear(width as u32, height as u32);
+    for (y, row) in output.rows_mut(()).enumerate() {
+        for (x, pixel) in row.iter_mut().enumerate() {
+            let input = raster.pixel(ox as i32 + x as i32, oy as i32 + y as i32);
+            let channels = input.channels();
+            let value = (255. * channels[0].to_f32()) as u8;
+            *pixel = SRgba8::new(value, value, value, 255);
         }
     }
+    write_glyph(output, index);
 }
 
 pub fn split_raster(raster: Raster8, def: Definition) {
@@ -75,7 +87,7 @@ pub fn split_raster(raster: Raster8, def: Definition) {
     let glyphs: u16 = 10 + (2 * 38);
     for index in 0..glyphs {
         let x = ox + (index * (def.width + def.padding));
-        save_glyph(&raster, x, y, width, height);
+        save_glyph(&raster, index, x, y, width, height);
     }
 }
 
