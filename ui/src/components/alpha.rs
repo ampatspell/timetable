@@ -44,36 +44,40 @@ impl<'a> ImageDrawable for ImageAlpha<'a> {
     where
         D: DrawTarget<Color = Self::Color>,
     {
-        let width = self.width;
-        let data = self.data;
-        let process = self.process;
-        target.draw_iter(AlphaPixelsIterator::new(width, data, process))
+        let area = Rectangle::new(Point::zero(), Size::new(self.width, self.height));
+        self.draw_sub_image(target, &area)
     }
 
-    fn draw_sub_image<D>(&self, target: &mut D, _area: &Rectangle) -> Result<(), D::Error>
+    fn draw_sub_image<D>(&self, target: &mut D, area: &Rectangle) -> Result<(), D::Error>
     where
         D: DrawTarget<Color = Self::Color>,
     {
-        self.draw(target)
+        let width = self.width;
+        let data = self.data;
+        let process = self.process;
+        target.draw_iter(AlphaPixelsIterator::new(data, width, area, process))
     }
 }
 
 pub struct AlphaPixelsIterator<'a> {
-    width: u32,
     data: &'a [u8],
+    width: u32,
+    area: &'a Rectangle,
     point: Point,
     process: &'a (dyn ProcessPixel<Rgb565> + 'static),
 }
 
 impl<'a> AlphaPixelsIterator<'a> {
     pub fn new(
-        width: u32,
         data: &'a [u8],
+        width: u32,
+        area: &'a Rectangle,
         process: &'a (dyn ProcessPixel<Rgb565> + 'static),
     ) -> Self {
         Self {
-            width,
             data,
+            width,
+            area,
             point: Point::new(0, 0),
             process,
         }
@@ -96,7 +100,7 @@ impl<'a> Iterator for AlphaPixelsIterator<'a> {
         let value = 255 - data[index as usize];
         let color = self.process.process_color(value);
 
-        if point.x == width as i32 {
+        if point.x == (width - 1) as i32 {
             self.point = Point::new(0, point.y + 1);
         } else {
             self.point = Point::new(point.x + 1, point.y);

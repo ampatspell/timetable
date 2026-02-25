@@ -1,3 +1,5 @@
+use core::ops::Add;
+
 use embedded_graphics::{image::Image, prelude::*, primitives::Rectangle};
 use static_cell::StaticCell;
 
@@ -53,6 +55,6 @@ impl<'a> Font<'a> {
         let rect = Rectangle::new(Point::new(0, 0), Size::new(10, 20));
         let sub = self.image.sub_image(&rect);
         let image = Image::new(&sub, position);
-        let result = image.draw(display);
+        image.draw(display).ok();
     }
 }

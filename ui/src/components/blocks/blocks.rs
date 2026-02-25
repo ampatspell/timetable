@@ -1,4 +1,3 @@
-use core::ops::Add;
 use embedded_graphics::prelude::*;
 use no_std_strings::str32;
 
