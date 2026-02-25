@@ -1,4 +1,7 @@
-use std::{ffi::OsStr, fs::write};
+use std::{
+    ffi::OsStr,
+    fs::{create_dir, write},
+};
 
 use headless_chrome::{
     Browser, LaunchOptions, protocol::cdp::Page::CaptureScreenshotFormatOption::Png,
@@ -56,17 +59,25 @@ pub fn load_raster(png: Vec<u8>) -> Raster8 {
     rgb8
 }
 
+static OUT: &str = "out";
+
+pub fn prepare_write_glyphs() {
+    create_dir(OUT).ok();
+}
+
 pub fn write_glyph(output: Raster<SRgba8>, index: u16) {
     let raster = PngRaster::Rgba8(output);
     let mut data = Vec::new();
     let mut encoder = Encoder::new(&mut data).into_step_enc();
     let step = png_pong::Step { raster, delay: 0 };
     encoder.encode(&step).unwrap();
-    let path = format!("out/{index}.png");
+    let path = format!("{OUT}/{index}.png");
     std::fs::write(path, data).unwrap();
 }
 
 pub fn save_glyph(raster: &Raster8, index: u16, ox: u16, oy: u16, width: u16, height: u16) {
+    prepare_write_glyphs();
+
     let mut output: Raster<SRgba8> = Raster::with_clear(width as u32, height as u32);
     for (y, row) in output.rows_mut(()).enumerate() {
         for (x, pixel) in row.iter_mut().enumerate() {
