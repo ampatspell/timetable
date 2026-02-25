@@ -1,6 +1,6 @@
 use std::{
     ffi::OsStr,
-    fs::{create_dir, write},
+    fs::{self, write},
 };
 
 use headless_chrome::{
@@ -62,22 +62,24 @@ pub fn load_raster(png: Vec<u8>) -> Raster8 {
 static OUT: &str = "out";
 
 pub fn prepare_write_glyphs() {
-    create_dir(OUT).ok();
+    fs::create_dir(OUT).ok();
 }
 
-pub fn write_glyph(output: Raster<SRgba8>, index: u16) {
+pub fn write_glyph(output: Raster<SRgba8>, name: &str) {
     let raster = PngRaster::Rgba8(output);
     let mut data = Vec::new();
     let mut encoder = Encoder::new(&mut data).into_step_enc();
     let step = png_pong::Step { raster, delay: 0 };
     encoder.encode(&step).unwrap();
-    let path = format!("{OUT}/{index}.png");
-    std::fs::write(path, data).unwrap();
+    let path = format!("{OUT}/{name}.png");
+    fs::write(path, data).unwrap();
 }
 
 pub fn save_glyph(raster: &Raster8, index: u16, ox: u16, oy: u16, width: u16, height: u16) {
+    let name = format!("font-{width}x{height}");
     prepare_write_glyphs();
 
+    let mut buffer = Vec::<u8>::new();
     let mut output: Raster<SRgba8> = Raster::with_clear(width as u32, height as u32);
     for (y, row) in output.rows_mut(()).enumerate() {
         for (x, pixel) in row.iter_mut().enumerate() {
@@ -85,9 +87,11 @@ pub fn save_glyph(raster: &Raster8, index: u16, ox: u16, oy: u16, width: u16, he
             let channels = input.channels();
             let value = (255. * channels[0].to_f32()) as u8;
             *pixel = SRgba8::new(value, value, value, 255);
+            buffer.push(value);
         }
     }
-    write_glyph(output, index);
+    write_glyph(output, format!("{name}-{index}").as_str());
+    fs::write(format!("{OUT}/{name}.raw"), buffer).unwrap();
 }
 
 pub fn split_raster(raster: Raster8, def: Definition, glyphs: u16) {
