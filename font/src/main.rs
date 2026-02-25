@@ -76,7 +76,7 @@ pub fn write_glyph(output: Raster<SRgba8>, name: &str) {
 }
 
 pub fn save_glyph(raster: &Raster8, index: u16, ox: u16, oy: u16, width: u16, height: u16) {
-    let name = format!("font-{width}x{height}");
+    let base_name = format!("font-{width}x{height}");
     prepare_write_glyphs();
 
     let mut buffer = Vec::<u8>::new();
@@ -90,8 +90,8 @@ pub fn save_glyph(raster: &Raster8, index: u16, ox: u16, oy: u16, width: u16, he
             buffer.push(value);
         }
     }
-    write_glyph(output, format!("{name}-{index}").as_str());
-    fs::write(format!("{OUT}/{name}.raw"), buffer).unwrap();
+    write_glyph(output, format!("{base_name}-{index}").as_str());
+    fs::write(format!("{OUT}/{base_name}.raw"), buffer).unwrap();
 }
 
 pub fn split_raster(raster: Raster8, def: Definition, glyphs: u16) {
