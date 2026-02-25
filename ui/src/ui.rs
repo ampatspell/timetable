@@ -30,7 +30,7 @@ impl<'a> UI<'a> {
             BlockPayload {
                 index: 0,
                 icon: str32::from("cloud-snow"),
-                lines: [str32::from("-05.70"), str32::from("Snow grains fall")],
+                lines: [str32::from("-05.70°"), str32::from("Snow grains fall")],
             },
             BlockPayload {
                 index: 1,

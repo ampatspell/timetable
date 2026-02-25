@@ -2,11 +2,10 @@ use core::ops::Add;
 
 use embedded_graphics::prelude::Point;
 use no_std_strings::str32;
-use profont::PROFONT_18_POINT;
 
 use crate::{
     Display,
-    components::{fonts::Fonts, icons::Icons, utils::draw_text},
+    components::{fonts::Fonts, icons::Icons},
 };
 
 pub struct BlockContext<'a> {
@@ -60,10 +59,10 @@ impl Block {
                     .iter()
                     .filter(|line| line.len() > 0)
                     .for_each(|line| {
-                        let rect = draw_text(display, point, &line, &PROFONT_18_POINT);
-                        let size = rect.size;
-                        point = point.add(Point::new(0, size.height as i32));
-                        u_height += size.height + 3;
+                        let font = context.fonts.for_size(20).unwrap();
+                        font.draw_string_at(display, &line, point);
+                        point = point.add(Point::new(0, font.size.height as i32));
+                        u_height += font.size.height + 3;
                     });
             }
 

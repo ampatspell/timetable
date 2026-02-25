@@ -25,7 +25,7 @@ pub fn create_png(font_size: u16) -> Vec<u8> {
         LaunchOptions::default_builder()
             .headless(true)
             .args(args)
-            .window_size(Some((1920, 600)))
+            .window_size(Some((2000, 600)))
             .build()
             .unwrap(),
     )
