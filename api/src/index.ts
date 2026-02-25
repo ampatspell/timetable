@@ -87,7 +87,7 @@ router.get('/font', async (ctx) => {
   let fontSize = asString(ctx.query['font-size']) ?? '20';
   ctx.headers['content-type'] = 'text/html';
 
-  let numbers = ' ×0123456789';
+  let numbers = '×0123456789';
   let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';
   let uppercase = lowercase.toUpperCase();
   let special = '?!():,.°+-';
