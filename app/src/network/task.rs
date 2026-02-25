@@ -12,9 +12,6 @@ use esp_radio::wifi::{
 };
 use static_cell::StaticCell;
 
-static RADIO_INIT: StaticCell<Controller<'static>> = StaticCell::new();
-static STACK_RESOURCE: StaticCell<StackResources<3>> = StaticCell::new();
-
 pub async fn wait_for_connection<'a>(stack: &Stack<'a>) {
     info!("WIFI: Waiting for link to be up");
     loop {
@@ -93,9 +90,10 @@ pub struct ConfigureNetworkOptions<'a> {
 pub async fn configure_network<'a>(opts: ConfigureNetworkOptions<'a>) {
     let ConfigureNetworkOptions { spawner, wifi } = opts;
 
-    let radio_init = RADIO_INIT
-        .uninit()
-        .write(esp_radio::init().expect("WIFI: Failed to initialize Wi-Fi/BLE controller"));
+    let radio_init = {
+        static CELL: StaticCell<Controller<'static>> = StaticCell::new();
+        CELL.init(esp_radio::init().expect("WIFI: Failed to initialize Wi-Fi/BLE controller"))
+    };
 
     let (wifi_controller, wifi_interfaces) =
         esp_radio::wifi::new(radio_init, wifi, Default::default())
@@ -107,7 +105,10 @@ pub async fn configure_network<'a>(opts: ConfigureNetworkOptions<'a>) {
     let dhcp_config = DhcpConfig::default();
 
     let config = embassy_net::Config::dhcpv4(dhcp_config);
-    let resources = STACK_RESOURCE.uninit().write(StackResources::<3>::new());
+    let resources = {
+        static CELL: StaticCell<StackResources<3>> = StaticCell::new();
+        CELL.init(StackResources::<3>::new())
+    };
 
     let (stack, runner) = embassy_net::new(wifi_interfaces.sta, config, resources, net_seed);
 

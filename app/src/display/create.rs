@@ -7,8 +7,6 @@ use mipidsi::{
     options::{ColorInversion, Orientation, Rotation},
 };
 
-static BUFFER: static_cell::StaticCell<[u8; 512]> = static_cell::StaticCell::new();
-
 pub struct CreateDisplayOptions {
     pub spi: Spi<'static, Blocking>,
     pub rst: Output<'static>,
@@ -28,7 +26,10 @@ pub fn create_display(
     Output<'static>,
 > {
     let CreateDisplayOptions { cs, dc, rst, spi } = opts;
-    let buffer = BUFFER.uninit().write([0u8; 512]);
+    let buffer = {
+        static CELL: static_cell::StaticCell<[u8; 512]> = static_cell::StaticCell::new();
+        CELL.init([0u8; 512])
+    };
     let mut delay = Delay::new();
     let spi_device = ExclusiveDevice::new_no_delay(spi, cs).unwrap();
     let di = SpiInterface::new(spi_device, dc, buffer);
