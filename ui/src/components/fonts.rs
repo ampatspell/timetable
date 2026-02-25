@@ -41,13 +41,17 @@ impl<'a> Font<'a> {
             CELL.init(BlendInBackground::new())
         };
         let image = ImageAlpha::new(data, size.width as u32, process);
+
         Self { size, image }
     }
 
-    pub fn draw_at(&self, display: &mut impl Display, glyph: u16, position: Point) {
-        let rect = Rectangle::new(Point::new(0, 20), Size::new(10, 20));
+    pub fn draw_glyph_at(&self, display: &mut impl Display, glyph: u32, position: Point) -> Point {
+        let size = self.size;
+        let rect = Rectangle::new(Point::new(0, (size.height * glyph) as i32), size);
         let sub = self.image.sub_image(&rect);
         let image = Image::new(&sub, position);
         image.draw(display).ok();
+
+        position.add(Point::new(size.width as i32, 0))
     }
 }
