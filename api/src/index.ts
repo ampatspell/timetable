@@ -86,6 +86,13 @@ router.get('/health', async (ctx) => {
 router.get('/font', async (ctx) => {
   let fontSize = asString(ctx.query['font-size']) ?? '20';
   ctx.headers['content-type'] = 'text/html';
+
+  let numbers = '×0123456789';
+  let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';
+  let uppercase = lowercase.toUpperCase();
+  let special = '°+-';
+  let glyphs = [...numbers, ...lowercase, ...uppercase, ...special].join('');
+
   ctx.body = dedent`
     <!doctype html>
     <html lang="en">
@@ -124,24 +131,14 @@ router.get('/font', async (ctx) => {
       </head>
       <body>
         <div class="content">
-          <div class="row numbers"></div>
-          <div class="row uppercase"></div>
-          <div class="row lowercase"></div>
-          <div class="row special"></div>
+          <div class="row"></div>
         </div>
         <div class="measure">M</div>
         <script>
           window.addEventListener('DOMContentLoaded', () => {
-            let numbers = '0123456789';
-            let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';
-            let uppercase = lowercase.toUpperCase();
-            let special = '+-°';
-
             let body = document.body;
-            body.querySelector('.row.numbers').textContent = numbers;
-            body.querySelector('.row.lowercase').textContent = lowercase;
-            body.querySelector('.row.uppercase').textContent = uppercase;
-            body.querySelector('.row.special').textContent = special;
+            let row = "${glyphs}";
+            body.querySelector('.row').textContent = row;
 
             let done = document.createElement('div');
             done.className = "done";
@@ -155,7 +152,7 @@ router.get('/font', async (ctx) => {
 
 const app = new Koa();
 app.use(router.routes()).use(router.allowedMethods());
-app.listen(3000);
+// app.listen(3000);
 
 // (async () => {
 //   const t =  await loadTimetable({
