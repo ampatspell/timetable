@@ -1,5 +1,5 @@
 use defmt::info;
-use embedded_graphics::{image::Image, pixelcolor::Rgb565, prelude::*};
+use embedded_graphics::{image::Image, pixelcolor::Rgb565, prelude::*, primitives::Rectangle};
 use static_cell::StaticCell;
 
 use crate::{
@@ -65,6 +65,20 @@ impl<'a> Icons<'a> {
             None => info!("Icon {} was not found", name),
         }
     }
+
+    pub fn draw_sub_image_at(
+        &self,
+        display: &mut impl Display,
+        name: &str,
+        position: Point,
+        area: Rectangle,
+    ) {
+        let icon = self.map.iter().find(|icon| icon.name.eq(name));
+        match icon {
+            Some(icon) => icon.draw_sub_image_at(display, position, area),
+            None => info!("Icon {} was not found", name),
+        }
+    }
 }
 
 pub struct Icon<'a> {
@@ -85,7 +99,17 @@ impl<'a> Icon<'a> {
 
     pub fn draw_at(&self, display: &mut impl Display, position: Point) -> () {
         let image = Image::new(&self.image, position);
-        let result = image.draw(display);
-        result.ok();
+        image.draw(display).ok();
+    }
+
+    pub fn draw_sub_image_at(
+        &self,
+        display: &mut impl Display,
+        position: Point,
+        area: Rectangle,
+    ) -> () {
+        let drawable = self.image.sub_image(&area);
+        let image = Image::new(&drawable, position);
+        image.draw(display).ok();
     }
 }

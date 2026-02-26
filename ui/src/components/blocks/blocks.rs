@@ -52,7 +52,8 @@ impl<'a> Blocks<'a> {
         });
 
         // let font = self.context.fonts.for_size(20).unwrap();
-        // let ret = font.draw_string_at(display, "Čau, Maija saule", Point::new(20, 20));
+        // let string = str128::from("Čau, Maija saule!");
+        // font.draw_string_at(display, &string, Point::new(30, 30));
     }
 
     pub fn on_time(&mut self) {

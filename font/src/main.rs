@@ -16,7 +16,7 @@ use png_pong::{Decoder, Encoder, PngRaster};
 
 type Raster8 = Raster<pix::el::Pix3<Ch8, Rgb, Straight, Srgb>>;
 
-pub fn create_png(font_size: u16) -> Vec<u8> {
+pub fn create_png(font_size: u16) -> (u64, Vec<u8>) {
     let args = vec![OsStr::new(
         "--disable-features=HttpsUpgrades,HttpsFirstBalancedModeAutoEnable",
     )];
@@ -39,10 +39,13 @@ pub fn create_png(font_size: u16) -> Vec<u8> {
     .wait_for_element(".done")
     .unwrap();
 
+    let e = tab.evaluate("glyphs.length", false).unwrap();
+    let glyphs = e.value.unwrap().as_number().unwrap().as_u64().unwrap();
+
     let screenshot = tab.capture_screenshot(Png, None, None, true).unwrap();
     write("screenshot.png", &screenshot).unwrap();
 
-    screenshot
+    (glyphs, screenshot)
 }
 
 pub fn load_raster(png: Vec<u8>) -> Raster8 {
@@ -117,14 +120,13 @@ pub struct Definition {
 }
 
 fn main() {
-    let glyphs: u16 = 85;
     let definition = Definition {
         font_size: 20,
         width: 10,
         height: 20,
         padding: 0,
     };
-    let png = create_png(definition.font_size);
+    let (glyphs, png) = create_png(definition.font_size);
     let raster = load_raster(png);
-    split_raster(raster, definition, glyphs);
+    split_raster(raster, definition, glyphs as u16);
 }

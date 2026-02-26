@@ -1,3 +1,5 @@
+use core::ops::Add;
+
 use embedded_graphics::{
     Pixel,
     image::ImageDrawable,
@@ -77,7 +79,7 @@ impl<'a> AlphaPixelsIterator<'a> {
         Self {
             data,
             width,
-            point: area.top_left,
+            point: Point::new(0, 0),
             area,
             process,
         }
@@ -94,21 +96,21 @@ impl<'a> Iterator for AlphaPixelsIterator<'a> {
         let top_left = area.top_left;
         let size = area.size;
         let data = self.data;
-        let index = to_index(current, width);
+        let index = to_index(current.add(top_left), width);
 
-        if current.y > top_left.y + size.height as i32 - 1 {
+        if current.y > size.height as i32 - 1 {
             return None;
         }
 
-        if current.x == (size.width - 1) as i32 {
-            self.point = Point::new(top_left.x, current.y + 1);
+        if current.x == size.width as i32 - 1 {
+            self.point = Point::new(0, current.y + 1);
         } else {
             self.point = Point::new(current.x + 1, current.y);
         }
 
         let value = 255 - data[index as usize];
         let color = self.process.process_color(value);
-        let point = Point::new(current.x - top_left.x, current.y - top_left.y);
+        let point = Point::new(current.x, current.y);
 
         Some(Pixel { 0: point, 1: color })
     }

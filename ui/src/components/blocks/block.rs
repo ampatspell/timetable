@@ -53,7 +53,7 @@ impl Block {
                     .icons
                     .draw_at(display, self.icon.to_str(), origin.add(Point::new(0, 0)));
 
-                let mut point = origin.add(Point::new(35, -4));
+                let mut point = origin.add(Point::new(35, 1));
 
                 self.lines
                     .iter()
@@ -62,7 +62,7 @@ impl Block {
                         let font = context.fonts.for_size(20).unwrap();
                         font.draw_string_at(display, &line, point);
                         point = point.add(Point::new(0, font.size.height as i32));
-                        u_height += font.size.height + 3;
+                        u_height += font.size.height + 4;
                     });
             }
 
