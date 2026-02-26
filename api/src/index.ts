@@ -36,22 +36,26 @@ router.get('/weather', async (ctx) => {
 
 router.get('/now', async (ctx) => {
   let now = createNow();
-  let year = now.getFullYear();
-  let month = now.getMonth();
-  let date = now.getDate();
-  let hours = now.getHours();
-  let minutes = now.getMinutes();
-  let seconds = now.getSeconds();
-  let millis = now.getMilliseconds();
-  ctx.body = dedent`
-    ${year}
-    ${month}
-    ${date}
-    ${hours}
-    ${minutes}
-    ${seconds}
-    ${millis}
-  `;
+  let time = now.getTime();
+
+  ctx.body = dedent`${time}`;
+
+  // let year = now.getFullYear();
+  // let month = now.getMonth();
+  // let date = now.getDate();
+  // let hours = now.getHours();
+  // let minutes = now.getMinutes();
+  // let seconds = now.getSeconds();
+  // let millis = now.getMilliseconds();
+  // ctx.body = dedent`
+  //   ${year}
+  //   ${month}
+  //   ${date}
+  //   ${hours}
+  //   ${minutes}
+  //   ${seconds}
+  //   ${millis}
+  // `;
 });
 
 router.get('/timetable', async (ctx) => {
