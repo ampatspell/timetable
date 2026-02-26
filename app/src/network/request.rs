@@ -1,4 +1,5 @@
-use crate::channel::{CHANNEL, Messages};
+use crate::channel::{NETWORK_CHANNEL, NetworkMessages};
+use chrono::DateTime;
 use defmt::info;
 use embassy_net::Stack;
 use embassy_net::dns::DnsSocket;
@@ -7,7 +8,6 @@ use embassy_time::{Duration, Timer};
 use no_std_strings::str256;
 use reqwless::client::HttpClient;
 use reqwless::request::Method::GET;
-use ui::payload::TimeData;
 
 #[derive(Debug, Clone)]
 struct RequestFailedError;
@@ -18,10 +18,8 @@ async fn request(stack: &Stack<'static>, path: &str) -> Result<str256, RequestFa
     let tcp = TcpClient::new(*stack, &tcp_state);
     let mut url_str = str256::from("http://timetable.app.amateurinmotion.com/");
     url_str.push(path);
-
     let url = url_str.to_str();
 
-    info!("Path {}", path);
     info!("GET {}", url);
 
     let mut client = HttpClient::new(&tcp, &dns);
@@ -30,8 +28,8 @@ async fn request(stack: &Stack<'static>, path: &str) -> Result<str256, RequestFa
     let response = http_req.send(&mut buffer).await.expect("HTTP request send");
 
     if response.status.is_successful() {
-        let body = response.body().read_to_end().await.unwrap();
-        let content = str256::from(core::str::from_utf8(body).unwrap());
+        let body = response.body().read_to_end().await.expect("Body");
+        let content = str256::from(core::str::from_utf8(body).expect("Content"));
 
         return Ok(content);
     }
@@ -42,22 +40,31 @@ async fn request(stack: &Stack<'static>, path: &str) -> Result<str256, RequestFa
 #[embassy_executor::task]
 pub async fn time_task(stack: Stack<'static>) {
     info!("Start time_task");
+
     loop {
         let result = request(&stack, "now").await;
         match result {
             Ok(s) => {
                 let body = s.to_str();
-                info!("Now:");
                 info!("{}", body);
-                let time = TimeData::parse(&body);
-                info!("{}", time);
-                CHANNEL.send(Messages::Time { time }).await;
+                let date_time = DateTime::parse_from_rfc3339(body).unwrap();
+                NETWORK_CHANNEL
+                    .send(NetworkMessages::Time { date_time })
+                    .await;
             }
             Err(_) => {
                 info!("Failed to fetch time");
             }
         }
         Timer::after(Duration::from_secs(60 * 60)).await;
+    }
+}
+
+#[embassy_executor::task]
+pub async fn tick_task(_stack: Stack<'static>) {
+    loop {
+        NETWORK_CHANNEL.send(NetworkMessages::Tick).await;
+        Timer::after(Duration::from_secs(1)).await;
     }
 }
 
@@ -87,7 +94,7 @@ pub async fn weather_task(stack: Stack<'static>) {
 
 #[embassy_executor::task]
 pub async fn timetable_task(stack: Stack<'static>) {
-    info!("Start weather_task");
+    info!("Start timetable_task");
     loop {
         let result = request(&stack, "timetable?route=riga_tram_1&stop=3123&direction=1").await;
         match result {

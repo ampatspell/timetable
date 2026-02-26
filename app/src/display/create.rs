@@ -42,7 +42,7 @@ pub fn create_display(
     let display = {
         let mut display = display;
         display
-            .set_orientation(Orientation::new().rotate(Rotation::Deg90))
+            .set_orientation(Orientation::new().rotate(Rotation::Deg270))
             .unwrap();
         display
     };

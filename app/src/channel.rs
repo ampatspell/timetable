@@ -1,9 +1,16 @@
+use chrono::{DateTime, FixedOffset};
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, channel::Channel};
-use ui::payload::TimeData;
+use no_std_strings::str8;
 
-pub enum Messages {
-    Ping {},
-    Time { time: TimeData },
+pub enum NetworkMessages {
+    Tick,
+    Time { date_time: DateTime<FixedOffset> },
 }
 
-pub static CHANNEL: Channel<CriticalSectionRawMutex, Messages, 10> = Channel::new();
+pub static NETWORK_CHANNEL: Channel<CriticalSectionRawMutex, NetworkMessages, 3> = Channel::new();
+
+pub enum UiMessages {
+    Time { time: str8 },
+}
+
+pub static UI_CHANNEL: Channel<CriticalSectionRawMutex, UiMessages, 3> = Channel::new();

@@ -14,9 +14,11 @@ use app::{
 };
 use defmt::info;
 use embassy_executor::Spawner;
+use esp_hal::xtensa_lx::debug_break;
 
 #[panic_handler]
 fn panic(info: &core::panic::PanicInfo) -> ! {
+    debug_break();
     info!("{}", info);
     loop {}
 }
@@ -31,8 +33,6 @@ esp_bootloader_esp_idf::esp_app_desc!();
 )]
 #[esp_rtos::main]
 async fn main(spawner: Spawner) {
-    info!("Hello");
-
     let ConfigureResponse {
         backlight,
         cs,
