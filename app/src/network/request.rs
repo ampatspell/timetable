@@ -1,11 +1,12 @@
 use crate::channel::{NETWORK_CHANNEL, Network};
+use crate::network::data::Weather;
 use crate::time::Time;
 use defmt::info;
 use embassy_net::Stack;
 use embassy_net::dns::DnsSocket;
 use embassy_net::tcp::client::{TcpClient, TcpClientState};
 use embassy_time::{Duration, Timer};
-use no_std_strings::str256;
+use no_std_strings::{str8, str16, str256};
 use reqwless::client::HttpClient;
 use reqwless::request::Method::GET;
 
@@ -37,6 +38,20 @@ async fn request(stack: &Stack<'static>, path: &str) -> Result<str256, RequestFa
     Err(RequestFailedError)
 }
 
+fn parse_time(string: &str) -> Time {
+    let mut iter = string.split("\n").into_iter();
+    let mut parse = || iter.next().unwrap().parse::<u8>().unwrap();
+    let hours = parse();
+    let minutes = parse();
+    let seconds = parse();
+
+    Time {
+        hours,
+        minutes,
+        seconds,
+    }
+}
+
 #[embassy_executor::task]
 pub async fn time_task(stack: Stack<'static>) {
     info!("Start time_task");
@@ -47,18 +62,14 @@ pub async fn time_task(stack: Stack<'static>) {
             Ok(s) => {
                 let body = s.to_str();
                 info!("{}", body);
-                let time = Time {
-                    hours: 0,
-                    minutes: 0,
-                    seconds: 0,
-                };
+                let time = parse_time(&body);
                 NETWORK_CHANNEL.send(Network::Time { time }).await;
             }
             Err(_) => {
                 info!("Failed to fetch time");
             }
         }
-        Timer::after(Duration::from_secs(60 * 60)).await;
+        Timer::after(Duration::from_secs(60)).await;
     }
 }
 
@@ -67,6 +78,25 @@ pub async fn tick_task(_stack: Stack<'static>) {
     loop {
         NETWORK_CHANNEL.send(Network::Tick).await;
         Timer::after(Duration::from_secs(1)).await;
+    }
+}
+
+fn parse_weather(string: &str) -> Weather {
+    let mut iter = string.split("\n").into_iter();
+    let icon = str8::from(iter.next().unwrap());
+    let temperature = str16::from(iter.next().unwrap());
+    let description = str16::from(iter.next().unwrap());
+    let uv = str16::from(iter.next().unwrap());
+    let sunrise = str16::from(iter.next().unwrap());
+    let sunset = str16::from(iter.next().unwrap());
+
+    Weather {
+        icon,
+        temperature,
+        description,
+        uv,
+        sunrise,
+        sunset,
     }
 }
 
@@ -83,14 +113,15 @@ pub async fn weather_task(stack: Stack<'static>) {
             Ok(s) => {
                 let body = s.to_str();
                 info!("Weather:");
-                info!("{}", body)
-                // CHANNEL.send(Messages::Time { time }).await;
+                info!("{}", body);
+                let weather = parse_weather(&body);
+                NETWORK_CHANNEL.send(Network::Weather { weather }).await;
             }
             Err(_) => {
                 info!("Failed to fetch weather");
             }
         }
-        Timer::after(Duration::from_secs(5 * 60 * 60)).await;
+        Timer::after(Duration::from_secs(5 * 60)).await;
     }
 }
 
@@ -104,7 +135,6 @@ pub async fn timetable_task(stack: Stack<'static>) {
                 let body = s.to_str();
                 info!("Timetable:");
                 info!("{}", body)
-                // CHANNEL.send(Messages::Time { time }).await;
             }
             Err(_) => {
                 info!("Failed to fetch timetable");

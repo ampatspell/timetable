@@ -57,7 +57,7 @@ impl<'a> Blocks<'a> {
         block.update(str8::from("clock"), [str16::from(time), str16::new()])
     }
 
-    pub fn on_data(&mut self, payload: &[BlockPayload; 5]) {
+    pub fn on_weather(&mut self, payload: &[BlockPayload; 4]) {
         let mut idx = 0;
         payload.iter().for_each(|payload| {
             let block = self.blocks.get_mut(idx + 1).unwrap();

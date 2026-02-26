@@ -6,9 +6,9 @@ use crate::{
 use defmt::info;
 use embassy_time::{Duration, Timer};
 use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
-use no_std_strings::str12;
+use no_std_strings::{str8, str12, str16};
 use numtoa::NumToA;
-use ui::ui::UI;
+use ui::{payload::BlockPayload, ui::UI};
 
 pub struct DisplayTaskOptions {
     pub spi: Spi<'static, Blocking>,
@@ -47,6 +47,9 @@ pub async fn display_task(opts: DisplayTaskOptions) {
             Visual::Time { time } => {
                 ui.on_time(&mut display, time);
             }
+            Visual::Weather { blocks } => {
+                ui.on_weather(&mut display, blocks);
+            }
         };
     }
 }
@@ -82,14 +85,33 @@ pub async fn display_timer_task() {
                         time.push_str(":");
                         push(now.seconds, &mut time);
 
-                        VISUAL_CHANNEL
-                            .send(crate::channel::Visual::Time { time })
-                            .await;
+                        VISUAL_CHANNEL.send(Visual::Time { time }).await;
 
                         Some(now)
                     }
                     _ => None,
                 }
+            }
+            Network::Weather { weather } => {
+                let blocks: [BlockPayload; 4] = [
+                    BlockPayload {
+                        icon: weather.icon,
+                        lines: [weather.temperature, weather.description],
+                    },
+                    BlockPayload {
+                        icon: str8::from("sun"),
+                        lines: [weather.uv, str16::new()],
+                    },
+                    BlockPayload {
+                        icon: str8::from("sunrise"),
+                        lines: [weather.sunrise, str16::new()],
+                    },
+                    BlockPayload {
+                        icon: str8::from("sunset"),
+                        lines: [weather.sunset, str16::new()],
+                    },
+                ];
+                VISUAL_CHANNEL.send(Visual::Weather { blocks }).await;
             }
         }
     }
