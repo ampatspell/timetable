@@ -154,10 +154,12 @@ router.get('/font', async (ctx) => {
         <div class="measure">M</div>
         <div class="mapping">${cell}</div>
         <script>
-          window.addEventListener('DOMContentLoaded', () => {
+
+        window.glyphs = "${glyphs}";
+
+        window.addEventListener('DOMContentLoaded', () => {
             let body = document.body;
-            let row = "${glyphs}";
-            body.querySelector('.row').textContent = row;
+            body.querySelector('.row').textContent = glyphs;
 
             let done = document.createElement('div');
             done.className = "done";
