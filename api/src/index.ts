@@ -3,7 +3,7 @@ import Router from '@koa/router';
 import { fetchWeather } from './weather.js';
 import { loadTimetable } from './timetable/index.js';
 import dedent from 'dedent';
-import { asString, createNow, formatSeconds, formatTime } from './utils.js';
+import { asString, createNow, formatDiff, formatSeconds, formatTime } from './utils.js';
 import { TZDate, tzOffset } from '@date-fns/tz';
 
 const router = new Router();
@@ -15,16 +15,17 @@ router.get('/weather', async (ctx) => {
   if(lat && lng) {
     const weather = await fetchWeather(lat, lng);
 
+    let uv = [...new Set([weather.uv.max, weather.uv.clearSkyMax])].join(' - ');
+    let sunrise = [weather.sunrise.time, weather.sunrise.diff].join(' ');
+    let sunset = [weather.sunset.time, weather.sunset.diff].join(' ');
+
     ctx.body = dedent`
       cloud-snow
       ${weather.temperature.value}
       ${weather.temperature.description?.short ?? ''}
-      ${weather.uv.max}
-      ${weather.uv.clearSkyMax}
-      ${weather.sunrise.time}
-      ${weather.sunrise.diff}
-      ${weather.sunset.time}
-      ${weather.sunset.diff}
+      ${uv}
+      ${sunrise}
+      ${sunset}
     `;
   } else {
     ctx.body = dedent`
