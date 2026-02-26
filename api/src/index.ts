@@ -36,7 +36,7 @@ router.get('/weather', async (ctx) => {
 
 router.get('/now', async (ctx) => {
   let now = createNow();
-  let time = now.getTime();
+  let time = now.toJSON();
 
   ctx.body = dedent`${time}`;
 
