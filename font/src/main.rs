@@ -119,14 +119,17 @@ pub struct Definition {
     pub padding: u16,
 }
 
+pub fn export_font(definition: Definition) {
+    let (glyphs, png) = create_png(definition.font_size);
+    let raster = load_raster(png);
+    split_raster(raster, definition, glyphs as u16);
+}
+
 fn main() {
-    let definition = Definition {
+    export_font(Definition {
         font_size: 20,
         width: 10,
         height: 20,
         padding: 0,
-    };
-    let (glyphs, png) = create_png(definition.font_size);
-    let raster = load_raster(png);
-    split_raster(raster, definition, glyphs as u16);
+    });
 }

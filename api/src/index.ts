@@ -94,15 +94,10 @@ router.get('/font', async (ctx) => {
   let array = [...numbers, ...lowercase, ...uppercase, ...special];
   let glyphs = array.join('');
 
-  let mapping = array.map((g,i) => `("${g}", ${i})`).join(',\n');
-
   let cell = dedent`
-    let mapping = {
-        static CELL: StaticCell<&[(&str, u8)]> = StaticCell::new();
-        CELL.init(&[
-    ${mapping}
-        ])
-    };
+    const mapping: [&str; ${array.length}] = [
+      ${array.map((g) => `"${g}"`).join(',\n')}
+    ];
   `;
 
   ctx.body = dedent`
