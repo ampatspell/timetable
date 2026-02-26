@@ -21,7 +21,7 @@ router.get('/weather', async (ctx) => {
 
     ctx.body = dedent`
       cloud-snow
-      ${weather.temperature.value}
+      ${weather.temperature.value}°
       ${weather.temperature.description?.short ?? ''}
       ${uv}
       ${sunrise}
