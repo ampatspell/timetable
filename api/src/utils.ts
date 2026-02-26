@@ -77,7 +77,7 @@ export const resetDate = (a: TZDate | undefined) => {
 }
 
 export const formatSeconds = (seconds: number) => {
-    let sign = seconds < 0 ? '-' : '';
+    let sign = seconds < 0 ? '-' : '+';
     seconds = Math.abs(seconds);
     if(seconds === 0) {
       return '';
