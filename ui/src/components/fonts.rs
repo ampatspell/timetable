@@ -1,4 +1,4 @@
-use core::ops::{Add, Index};
+use core::ops::Add;
 
 use embedded_graphics::{image::Image, prelude::*, primitives::Rectangle};
 use static_cell::StaticCell;
