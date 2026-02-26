@@ -1,5 +1,5 @@
-use crate::channel::{NETWORK_CHANNEL, NetworkMessages};
-use chrono::DateTime;
+use crate::channel::{NETWORK_CHANNEL, Network};
+use crate::time::Time;
 use defmt::info;
 use embassy_net::Stack;
 use embassy_net::dns::DnsSocket;
@@ -47,10 +47,12 @@ pub async fn time_task(stack: Stack<'static>) {
             Ok(s) => {
                 let body = s.to_str();
                 info!("{}", body);
-                let date_time = DateTime::parse_from_rfc3339(body).unwrap();
-                NETWORK_CHANNEL
-                    .send(NetworkMessages::Time { date_time })
-                    .await;
+                let time = Time {
+                    hours: 0,
+                    minutes: 0,
+                    seconds: 0,
+                };
+                NETWORK_CHANNEL.send(Network::Time { time }).await;
             }
             Err(_) => {
                 info!("Failed to fetch time");
@@ -63,7 +65,7 @@ pub async fn time_task(stack: Stack<'static>) {
 #[embassy_executor::task]
 pub async fn tick_task(_stack: Stack<'static>) {
     loop {
-        NETWORK_CHANNEL.send(NetworkMessages::Tick).await;
+        NETWORK_CHANNEL.send(Network::Tick).await;
         Timer::after(Duration::from_secs(1)).await;
     }
 }

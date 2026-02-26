@@ -4,3 +4,4 @@ pub mod configure;
 pub mod constants;
 pub mod display;
 pub mod network;
+pub mod time;

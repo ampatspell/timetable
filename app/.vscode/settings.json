@@ -15,6 +15,7 @@
     "defmt",
     "dhcpv",
     "mipidsi",
+    "numtoa",
     "pixelcolor",
     "reqwless",
     "timg",

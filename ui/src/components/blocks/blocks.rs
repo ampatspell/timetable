@@ -1,7 +1,7 @@
 use core::ops::Add;
 
 use embedded_graphics::prelude::*;
-use no_std_strings::str32;
+use no_std_strings::{str8, str12, str16};
 
 use crate::{
     Display,
@@ -50,18 +50,11 @@ impl<'a> Blocks<'a> {
                 force = true;
             }
         });
-
-        // let font = self.context.fonts.for_size(20).unwrap();
-        // let string = str128::from("Čau, Maija saule!");
-        // font.draw_string_at(display, &string, Point::new(30, 30));
     }
 
-    pub fn on_time(&mut self) {
+    pub fn on_time(&mut self, time: &str12) {
         let block = self.blocks.get_mut(0).unwrap();
-        block.update(
-            str32::from("clock"),
-            [str32::from("01:02:22"), str32::new()],
-        )
+        block.update(str8::from("clock"), [str16::from(time), str16::new()])
     }
 
     pub fn on_data(&mut self, payload: &[BlockPayload; 5]) {
