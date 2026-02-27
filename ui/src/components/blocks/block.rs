@@ -63,7 +63,7 @@ impl Block {
                         let font = context.fonts.for_size(20).unwrap();
                         font.draw_string_at(display, &line, point);
                         point = point.add(Point::new(0, font.size.height as i32));
-                        u_height += font.size.height + 4;
+                        u_height += font.size.height;
                     });
             }
 

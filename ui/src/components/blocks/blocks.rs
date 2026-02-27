@@ -15,7 +15,7 @@ use crate::{
 
 pub struct Blocks<'a> {
     origin: Point,
-    blocks: [Block; 6],
+    blocks: [Block; 7],
     context: BlockContext<'a>,
 }
 
@@ -25,6 +25,7 @@ impl<'a> Blocks<'a> {
         let fonts = Fonts::new();
         let context = BlockContext { fonts, icons };
         let blocks = [
+            Block::new(),
             Block::new(),
             Block::new(),
             Block::new(),
@@ -69,7 +70,7 @@ impl<'a> Blocks<'a> {
     }
 
     pub fn on_timetable(&mut self, payload: &BlockPayload) {
-        let block = self.blocks.get_mut(4).unwrap();
+        let block = self.blocks.get_mut(5).unwrap();
         block.update(payload.icon, payload.lines);
     }
 }
