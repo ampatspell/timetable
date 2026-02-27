@@ -6,7 +6,7 @@ use crate::{
 use defmt::info;
 use embassy_time::{Duration, Timer};
 use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
-use no_std_strings::{str12, str16};
+use no_std_strings::{str12, str32};
 use numtoa::NumToA;
 use ui::{payload::BlockPayload, ui::UI};
 
@@ -58,7 +58,6 @@ pub async fn display_task(opts: DisplayTaskOptions) {
 #[embassy_executor::task]
 pub async fn display_timer_task() {
     let mut time: Option<Time> = None;
-
     loop {
         let message = NETWORK_CHANNEL.receive().await;
         match message {
@@ -86,6 +85,7 @@ pub async fn display_timer_task() {
                         time.push_str(":");
                         push(now.seconds, &mut time);
 
+                        dots = !dots;
                         VISUAL_CHANNEL.send(Visual::Time { time }).await;
 
                         Some(now)
@@ -101,15 +101,15 @@ pub async fn display_timer_task() {
                     },
                     BlockPayload {
                         icon: str12::from("sun"),
-                        lines: [weather.uv, str16::new()],
+                        lines: [weather.uv, str32::new()],
                     },
                     BlockPayload {
                         icon: str12::from("sunrise"),
-                        lines: [weather.sunrise, str16::new()],
+                        lines: [weather.sunrise, str32::new()],
                     },
                     BlockPayload {
                         icon: str12::from("sunset"),
-                        lines: [weather.sunset, str16::new()],
+                        lines: [weather.sunset, str32::new()],
                     },
                 ];
                 VISUAL_CHANNEL.send(Visual::Weather { blocks }).await;

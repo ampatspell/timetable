@@ -1,3 +1,5 @@
+use core::str::from_utf8;
+
 use crate::channel::{NETWORK_CHANNEL, Network};
 use crate::network::data::Weather;
 use crate::time::Time;
@@ -6,7 +8,7 @@ use embassy_net::Stack;
 use embassy_net::dns::DnsSocket;
 use embassy_net::tcp::client::{TcpClient, TcpClientState};
 use embassy_time::{Duration, Timer};
-use no_std_strings::{str12, str16, str256};
+use no_std_strings::{str12, str32, str256};
 use reqwless::client::HttpClient;
 use reqwless::request::Method::GET;
 
@@ -25,12 +27,49 @@ async fn request(stack: &Stack<'static>, path: &str) -> Result<str256, RequestFa
 
     let mut client = HttpClient::new(&tcp, &dns);
     let mut buffer = [0u8; 4096];
-    let mut http_req = client.request(GET, url).await.expect("HTTP request");
-    let response = http_req.send(&mut buffer).await.expect("HTTP request send");
+
+    let http_req = client.request(GET, url).await;
+    if http_req.is_err() {
+        match http_req.err().unwrap() {
+            reqwless::Error::AlreadySent => info!("Already sent"),
+            reqwless::Error::BufferTooSmall => info!("Buffer too small"),
+            reqwless::Error::Codec => info!("Codec"),
+            reqwless::Error::ConnectionAborted => info!("Connection aborted"),
+            reqwless::Error::Dns => info!("DNS"),
+            reqwless::Error::IncorrectBodyWritten => info!("Incorrect body"),
+            reqwless::Error::InvalidUrl(..) => info!("Invalid url"),
+            reqwless::Error::Network(arg) => info!("Network {:?}", arg),
+        }
+
+        // debug_break();
+        info!("HTTP request");
+        return Err(RequestFailedError);
+    }
+    let mut http_req = http_req.unwrap();
+
+    let response = http_req.send(&mut buffer).await;
+    if response.is_err() {
+        info!("HTTP request send");
+        return Err(RequestFailedError);
+    }
+    let response = response.unwrap();
 
     if response.status.is_successful() {
-        let body = response.body().read_to_end().await.expect("Body");
-        let content = str256::from(core::str::from_utf8(body).expect("Content"));
+        let body = response.body().read_to_end().await;
+        if body.is_err() {
+            info!("HTTP request read body");
+            return Err(RequestFailedError);
+        }
+        let body = body.unwrap();
+
+        let utf8 = from_utf8(body);
+        if utf8.is_err() {
+            info!("HTTP body utf8");
+            return Err(RequestFailedError);
+        }
+        let utf8 = utf8.unwrap();
+
+        let content = str256::from(utf8);
 
         return Ok(content);
     }
@@ -55,7 +94,6 @@ fn parse_time(string: &str) -> Time {
 #[embassy_executor::task]
 pub async fn time_task(stack: Stack<'static>) {
     info!("Start time_task");
-
     loop {
         let result = request(&stack, "now").await;
         match result {
@@ -83,11 +121,11 @@ pub async fn tick_task(_stack: Stack<'static>) {
 fn parse_weather(string: &str) -> Weather {
     let mut iter = string.split("\n").into_iter();
     let icon = str12::from(iter.next().unwrap());
-    let temperature = str16::from(iter.next().unwrap());
-    let description = str16::from(iter.next().unwrap());
-    let uv = str16::from(iter.next().unwrap());
-    let sunrise = str16::from(iter.next().unwrap());
-    let sunset = str16::from(iter.next().unwrap());
+    let temperature = str32::from(iter.next().unwrap());
+    let description = str32::from(iter.next().unwrap());
+    let uv = str32::from(iter.next().unwrap());
+    let sunrise = str32::from(iter.next().unwrap());
+    let sunset = str32::from(iter.next().unwrap());
 
     Weather {
         icon,
@@ -113,18 +151,19 @@ pub async fn weather_task(stack: Stack<'static>) {
                 let body = s.to_str();
                 let weather = parse_weather(&body);
                 NETWORK_CHANNEL.send(Network::Weather { weather }).await;
+                Timer::after(Duration::from_secs(5 * 60)).await;
             }
             Err(_) => {
                 info!("Failed to fetch weather");
+                Timer::after(Duration::from_secs(60)).await;
             }
         }
-        Timer::after(Duration::from_secs(5 * 60)).await;
     }
 }
 
-fn parse_timetable(string: &str) -> [str16; 2] {
+fn parse_timetable(string: &str) -> [str32; 2] {
     let mut iter = string.split("\n").into_iter();
-    let mut parse = || str16::from(iter.next().unwrap());
+    let mut parse = || str32::from(iter.next().unwrap());
     [parse(), parse()]
 }
 

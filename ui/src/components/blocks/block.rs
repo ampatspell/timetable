@@ -1,8 +1,7 @@
 use core::ops::Add;
 
-use defmt::info;
 use embedded_graphics::prelude::Point;
-use no_std_strings::{str12, str16};
+use no_std_strings::{str12, str32};
 
 use crate::{
     Display,
@@ -21,7 +20,7 @@ pub struct BlockDrawResult {
 
 pub struct Block {
     icon: str12,
-    lines: [str16; 2],
+    lines: [str32; 2],
     needs_draw: bool,
     height: i32,
 }
@@ -29,7 +28,7 @@ pub struct Block {
 impl Block {
     pub fn new() -> Self {
         let icon = str12::new();
-        let lines = [str16::new(), str16::new()];
+        let lines = [str32::new(), str32::new()];
         Self {
             icon,
             lines,
@@ -72,7 +71,7 @@ impl Block {
             self.height = height;
             self.needs_draw = false;
 
-            info!("Draw {}", self.icon.as_str());
+            // info!("Draw {}", self.icon.as_str());
 
             return BlockDrawResult {
                 height: height,
@@ -90,7 +89,7 @@ impl Block {
         self.needs_draw = true;
     }
 
-    pub fn update(&mut self, icon: str12, lines: [str16; 2]) {
+    pub fn update(&mut self, icon: str12, lines: [str32; 2]) {
         if !self.icon.eq(&icon) {
             self.icon = icon;
             self.set_needs_draw();

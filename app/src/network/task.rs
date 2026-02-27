@@ -107,8 +107,8 @@ pub async fn configure_network<'a>(opts: ConfigureNetworkOptions<'a>) {
     let config = embassy_net::Config::dhcpv4(dhcp_config);
     let resources = {
         // max sockets
-        static CELL: StaticCell<StackResources<8>> = StaticCell::new();
-        CELL.init(StackResources::<8>::new())
+        static CELL: StaticCell<StackResources<16>> = StaticCell::new();
+        CELL.init(StackResources::<16>::new())
     };
 
     let (stack, runner) = embassy_net::new(wifi_interfaces.sta, config, resources, net_seed);
