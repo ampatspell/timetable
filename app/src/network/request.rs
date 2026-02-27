@@ -61,7 +61,6 @@ pub async fn time_task(stack: Stack<'static>) {
         match result {
             Ok(s) => {
                 let body = s.to_str();
-                info!("{}", body);
                 let time = parse_time(&body);
                 NETWORK_CHANNEL.send(Network::Time { time }).await;
             }
@@ -112,8 +111,6 @@ pub async fn weather_task(stack: Stack<'static>) {
         match result {
             Ok(s) => {
                 let body = s.to_str();
-                info!("Weather:");
-                info!("{}", body);
                 let weather = parse_weather(&body);
                 NETWORK_CHANNEL.send(Network::Weather { weather }).await;
             }
@@ -139,8 +136,6 @@ pub async fn timetable_task(stack: Stack<'static>) {
         match result {
             Ok(s) => {
                 let body = s.to_str();
-                info!("Timetable:");
-                info!("{}", body);
                 let timetable = parse_timetable(&body);
                 NETWORK_CHANNEL.send(Network::Timetable { timetable }).await;
             }

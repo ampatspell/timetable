@@ -12,7 +12,7 @@ pub struct UI<'a> {
 
 impl<'a> UI<'a> {
     pub fn new() -> Self {
-        let blocks = Blocks::new(Point::new(35, 25));
+        let blocks = Blocks::new(Point::new(50, 30));
         Self { blocks }
     }
 
@@ -20,35 +20,9 @@ impl<'a> UI<'a> {
         display.clear(BACKGROUND_COLOR).ok();
     }
 
-    pub fn draw(&mut self, display: &mut impl Display) -> () {
+    fn draw(&mut self, display: &mut impl Display) -> () {
         self.blocks.draw(display);
     }
-
-    // pub fn update(&mut self) {
-    //     let blocks = [
-    //         BlockPayload {
-    //             icon: str8::from("cloud-snow"),
-    //             lines: [str16::from("-05.70°"), str16::from("Snow grains fall")],
-    //         },
-    //         BlockPayload {
-    //             icon: str8::from("sun"),
-    //             lines: [str16::from("01"), str16::new()],
-    //         },
-    //         BlockPayload {
-    //             icon: str8::from("sunrise"),
-    //             lines: [str16::from("06:39:10"), str16::new()],
-    //         },
-    //         BlockPayload {
-    //             icon: str8::from("sunset"),
-    //             lines: [str16::from("03:11:45"), str16::new()],
-    //         },
-    //         BlockPayload {
-    //             icon: str8::from("bus-stop"),
-    //             lines: [str16::from("01:12:00 -02m"), str16::from("01:28:00 +30s")],
-    //         },
-    //     ];
-    //     self.blocks.on_data(&blocks);
-    // }
 
     pub fn on_weather(&mut self, display: &mut impl Display, blocks: [BlockPayload; 4]) {
         self.blocks.on_weather(&blocks);
