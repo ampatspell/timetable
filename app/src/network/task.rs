@@ -50,9 +50,9 @@ async fn connection_task(mut controller: WifiController<'static>) {
                     .with_password(WIFI_PASSWORD.into()),
             );
             controller.set_config(&client_config).unwrap();
-            info!("WIFI: Starting");
+            info!("WiFi: Starting");
             controller.start_async().await.unwrap();
-            info!("WIFI: Started");
+            info!("WiFi: Started");
         }
 
         // info!("Scan");
@@ -65,11 +65,11 @@ async fn connection_task(mut controller: WifiController<'static>) {
         //     info!("{:?}", ap);
         // }
 
-        info!("WiFI: Connecting to {}…", WIFI_SSID);
+        info!("WiFi: Connecting to {}…", WIFI_SSID);
         match controller.connect_async().await {
-            Ok(_) => info!("WIFI: connected!"),
+            Ok(_) => info!("WiFi: connected!"),
             Err(e) => {
-                info!("WIFI: Failed to connect: {:?}", e);
+                info!("WiFi: Failed to connect: {:?}", e);
                 Timer::after(Duration::from_secs(5)).await
             }
         }
@@ -92,12 +92,12 @@ pub async fn configure_network<'a>(opts: ConfigureNetworkOptions<'a>) {
 
     let radio_init = {
         static CELL: StaticCell<Controller<'static>> = StaticCell::new();
-        CELL.init(esp_radio::init().expect("WIFI: Failed to initialize Wi-Fi/BLE controller"))
+        CELL.init(esp_radio::init().expect("WiFi: Failed to initialize Wi-Fi/BLE controller"))
     };
 
     let (wifi_controller, wifi_interfaces) =
         esp_radio::wifi::new(radio_init, wifi, Default::default())
-            .expect("WIFI: Failed to initialize Wi-Fi controller");
+            .expect("WiFi: Failed to initialize Wi-Fi controller");
 
     let rng = Rng::new();
     let net_seed = rng.random() as u64 | ((rng.random() as u64) << 32);
