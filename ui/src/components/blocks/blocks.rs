@@ -15,7 +15,7 @@ use crate::{
 
 pub struct Blocks<'a> {
     origin: Point,
-    blocks: [Block; 7],
+    blocks: [Block; 8],
     context: BlockContext<'a>,
 }
 
@@ -25,6 +25,7 @@ impl<'a> Blocks<'a> {
         let fonts = Fonts::new();
         let context = BlockContext { fonts, icons };
         let blocks = [
+            Block::new(),
             Block::new(),
             Block::new(),
             Block::new(),
@@ -42,7 +43,8 @@ impl<'a> Blocks<'a> {
 
     pub fn draw(&mut self, display: &mut impl Display) {
         let mut y: i32 = 0;
-        let mut force = false;
+        // TODO: force = false and clear before drawing
+        let mut force = true;
         self.blocks.iter_mut().for_each(|block| {
             let origin = self.origin.add(Point::new(0, y as i32));
             let result = block.draw_at(display, &self.context, origin, false);
@@ -51,6 +53,14 @@ impl<'a> Blocks<'a> {
                 force = true;
             }
         });
+    }
+
+    pub fn on_love(&mut self) {
+        let block = self.blocks.get_mut(0).unwrap();
+        block.update(
+            str12::from("cat"),
+            [str32::from("Tu esi vislabākā."), str32::from("kaķis")],
+        );
     }
 
     pub fn on_time(&mut self, time: &str12) {
@@ -70,15 +80,7 @@ impl<'a> Blocks<'a> {
     }
 
     pub fn on_timetable(&mut self, payload: &BlockPayload) {
-        let block = self.blocks.get_mut(6).unwrap();
+        let block = self.blocks.get_mut(7).unwrap();
         block.update(payload.icon, payload.lines);
-    }
-
-    pub fn on_love(&mut self) {
-        let block = self.blocks.get_mut(0).unwrap();
-        block.update(
-            str12::from("cat"),
-            [str32::from("Tu esi vislabākā."), str32::from("kaķis")],
-        );
     }
 }
