@@ -85,7 +85,6 @@ pub async fn display_timer_task() {
                         time.push_str(":");
                         push(now.seconds, &mut time);
 
-                        dots = !dots;
                         VISUAL_CHANNEL.send(Visual::Time { time }).await;
 
                         Some(now)

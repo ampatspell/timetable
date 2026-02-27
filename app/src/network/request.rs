@@ -180,6 +180,8 @@ pub async fn timetable_task(stack: Stack<'static>) {
             }
             Err(_) => {
                 info!("Failed to fetch timetable");
+                let timetable = [str32::from("Salūza"), str32::new()];
+                NETWORK_CHANNEL.send(Network::Timetable { timetable }).await;
             }
         }
         Timer::after(Duration::from_secs(5)).await;

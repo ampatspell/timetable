@@ -12,7 +12,7 @@ pub struct UI<'a> {
 
 impl<'a> UI<'a> {
     pub fn new() -> Self {
-        let blocks = Blocks::new(Point::new(45, 30));
+        let blocks = Blocks::new(Point::new(45, 20));
         Self { blocks }
     }
 

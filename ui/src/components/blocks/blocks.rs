@@ -78,7 +78,7 @@ impl<'a> Blocks<'a> {
         let block = self.blocks.get_mut(0).unwrap();
         block.update(
             str12::from("cat"),
-            [str32::from("Tu esi vislabākā"), str32::from("kaķis")],
+            [str32::from("Tu esi vislabākā."), str32::from("kaķis")],
         );
     }
 }
