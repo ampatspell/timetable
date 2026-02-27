@@ -6,7 +6,7 @@ use crate::{
 use defmt::info;
 use embassy_time::{Duration, Timer};
 use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
-use no_std_strings::{str8, str12, str16};
+use no_std_strings::{str12, str16};
 use numtoa::NumToA;
 use ui::{payload::BlockPayload, ui::UI};
 
@@ -50,6 +50,7 @@ pub async fn display_task(opts: DisplayTaskOptions) {
             Visual::Weather { blocks } => {
                 ui.on_weather(&mut display, blocks);
             }
+            Visual::Timetable { block } => ui.on_timetable(&mut display, block),
         };
     }
 }
@@ -99,19 +100,26 @@ pub async fn display_timer_task() {
                         lines: [weather.temperature, weather.description],
                     },
                     BlockPayload {
-                        icon: str8::from("sun"),
+                        icon: str12::from("sun"),
                         lines: [weather.uv, str16::new()],
                     },
                     BlockPayload {
-                        icon: str8::from("sunrise"),
+                        icon: str12::from("sunrise"),
                         lines: [weather.sunrise, str16::new()],
                     },
                     BlockPayload {
-                        icon: str8::from("sunset"),
+                        icon: str12::from("sunset"),
                         lines: [weather.sunset, str16::new()],
                     },
                 ];
                 VISUAL_CHANNEL.send(Visual::Weather { blocks }).await;
+            }
+            Network::Timetable { timetable } => {
+                let block = BlockPayload {
+                    icon: str12::from("bus-stop"),
+                    lines: timetable,
+                };
+                VISUAL_CHANNEL.send(Visual::Timetable { block }).await;
             }
         }
     }

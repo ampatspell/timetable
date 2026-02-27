@@ -1,7 +1,7 @@
-use no_std_strings::{str8, str16};
+use no_std_strings::{str12, str16};
 
 pub struct Weather {
-    pub icon: str8,
+    pub icon: str12,
     pub temperature: str16,
     pub description: str16,
     pub uv: str16,

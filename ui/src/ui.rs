@@ -55,6 +55,11 @@ impl<'a> UI<'a> {
         self.draw(display);
     }
 
+    pub fn on_timetable(&mut self, display: &mut impl Display, block: BlockPayload) {
+        self.blocks.on_timetable(&block);
+        self.draw(display);
+    }
+
     pub fn on_time(&mut self, display: &mut impl Display, string: str12) {
         self.blocks.on_time(&string);
         self.draw(display);

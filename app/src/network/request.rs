@@ -6,7 +6,7 @@ use embassy_net::Stack;
 use embassy_net::dns::DnsSocket;
 use embassy_net::tcp::client::{TcpClient, TcpClientState};
 use embassy_time::{Duration, Timer};
-use no_std_strings::{str8, str16, str256};
+use no_std_strings::{str12, str16, str256};
 use reqwless::client::HttpClient;
 use reqwless::request::Method::GET;
 
@@ -83,7 +83,7 @@ pub async fn tick_task(_stack: Stack<'static>) {
 
 fn parse_weather(string: &str) -> Weather {
     let mut iter = string.split("\n").into_iter();
-    let icon = str8::from(iter.next().unwrap());
+    let icon = str12::from(iter.next().unwrap());
     let temperature = str16::from(iter.next().unwrap());
     let description = str16::from(iter.next().unwrap());
     let uv = str16::from(iter.next().unwrap());
@@ -125,6 +125,12 @@ pub async fn weather_task(stack: Stack<'static>) {
     }
 }
 
+fn parse_timetable(string: &str) -> [str16; 2] {
+    let mut iter = string.split("\n").into_iter();
+    let mut parse = || str16::from(iter.next().unwrap());
+    [parse(), parse()]
+}
+
 #[embassy_executor::task]
 pub async fn timetable_task(stack: Stack<'static>) {
     info!("Start timetable_task");
@@ -134,12 +140,14 @@ pub async fn timetable_task(stack: Stack<'static>) {
             Ok(s) => {
                 let body = s.to_str();
                 info!("Timetable:");
-                info!("{}", body)
+                info!("{}", body);
+                let timetable = parse_timetable(&body);
+                NETWORK_CHANNEL.send(Network::Timetable { timetable }).await;
             }
             Err(_) => {
                 info!("Failed to fetch timetable");
             }
         }
-        Timer::after(Duration::from_secs(5 * 60 * 60)).await;
+        Timer::after(Duration::from_secs(5)).await;
     }
 }

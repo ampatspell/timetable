@@ -1,7 +1,7 @@
 use core::ops::Add;
 
 use embedded_graphics::prelude::*;
-use no_std_strings::{str8, str12, str16};
+use no_std_strings::{str12, str16};
 
 use crate::{
     Display,
@@ -54,7 +54,7 @@ impl<'a> Blocks<'a> {
 
     pub fn on_time(&mut self, time: &str12) {
         let block = self.blocks.get_mut(0).unwrap();
-        block.update(str8::from("clock"), [str16::from(time), str16::new()])
+        block.update(str12::from("clock"), [str16::from(time), str16::new()])
     }
 
     pub fn on_weather(&mut self, payload: &[BlockPayload; 4]) {
@@ -66,5 +66,10 @@ impl<'a> Blocks<'a> {
             block.update(icon, lines);
             idx += 1;
         });
+    }
+
+    pub fn on_timetable(&mut self, payload: &BlockPayload) {
+        let block = self.blocks.get_mut(4).unwrap();
+        block.update(payload.icon, payload.lines);
     }
 }
