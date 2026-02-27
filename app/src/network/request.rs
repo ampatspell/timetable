@@ -30,17 +30,16 @@ async fn request(stack: &Stack<'static>, path: &str) -> Result<str256, RequestFa
 
     let http_req = client.request(GET, url).await;
     if http_req.is_err() {
-        match http_req.err().unwrap() {
-            reqwless::Error::AlreadySent => info!("Already sent"),
-            reqwless::Error::BufferTooSmall => info!("Buffer too small"),
-            reqwless::Error::Codec => info!("Codec"),
-            reqwless::Error::ConnectionAborted => info!("Connection aborted"),
-            reqwless::Error::Dns => info!("DNS"),
-            reqwless::Error::IncorrectBodyWritten => info!("Incorrect body"),
-            reqwless::Error::InvalidUrl(..) => info!("Invalid url"),
-            reqwless::Error::Network(arg) => info!("Network {:?}", arg),
-        }
-
+        // match http_req.err().unwrap() {
+        //     reqwless::Error::AlreadySent => info!("Already sent"),
+        //     reqwless::Error::BufferTooSmall => info!("Buffer too small"),
+        //     reqwless::Error::Codec => info!("Codec"),
+        //     reqwless::Error::ConnectionAborted => info!("Connection aborted"),
+        //     reqwless::Error::Dns => info!("DNS"),
+        //     reqwless::Error::IncorrectBodyWritten => info!("Incorrect body"),
+        //     reqwless::Error::InvalidUrl(..) => info!("Invalid url"),
+        //     reqwless::Error::Network(arg) => info!("Network {:?}", arg),
+        // }
         // debug_break();
         info!("HTTP request");
         return Err(RequestFailedError);
