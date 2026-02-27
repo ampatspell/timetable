@@ -54,14 +54,14 @@ impl<'a> Blocks<'a> {
     }
 
     pub fn on_time(&mut self, time: &str12) {
-        let block = self.blocks.get_mut(0).unwrap();
+        let block = self.blocks.get_mut(1).unwrap();
         block.update(str12::from("clock"), [str16::from(time), str16::new()])
     }
 
     pub fn on_weather(&mut self, payload: &[BlockPayload; 4]) {
-        let mut idx = 0;
+        let mut idx = 2;
         payload.iter().for_each(|payload| {
-            let block = self.blocks.get_mut(idx + 1).unwrap();
+            let block = self.blocks.get_mut(idx).unwrap();
             let icon = payload.icon;
             let lines = payload.lines;
             block.update(icon, lines);
@@ -70,7 +70,15 @@ impl<'a> Blocks<'a> {
     }
 
     pub fn on_timetable(&mut self, payload: &BlockPayload) {
-        let block = self.blocks.get_mut(5).unwrap();
+        let block = self.blocks.get_mut(6).unwrap();
         block.update(payload.icon, payload.lines);
+    }
+
+    pub fn on_love(&mut self) {
+        let block = self.blocks.get_mut(0).unwrap();
+        block.update(
+            str12::from("cat"),
+            [str16::from("Tu esi visla-"), str16::from("bākais kaķis")],
+        );
     }
 }

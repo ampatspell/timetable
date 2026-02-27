@@ -4,8 +4,6 @@ pub mod alpha;
 pub mod blocks;
 pub mod fonts;
 pub mod icons;
-pub mod schedule;
-pub mod temperature;
 pub mod utils;
 
 // https://rgbcolorpicker.com/565

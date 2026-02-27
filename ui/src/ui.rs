@@ -18,6 +18,8 @@ impl<'a> UI<'a> {
 
     pub fn prepare(&mut self, display: &mut impl Display) {
         display.clear(BACKGROUND_COLOR).ok();
+        self.blocks.on_love();
+        self.draw(display);
     }
 
     fn draw(&mut self, display: &mut impl Display) -> () {

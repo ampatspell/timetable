@@ -8,7 +8,7 @@ use crate::{
 };
 
 pub struct Icons<'a> {
-    map: [Icon<'a>; 6],
+    map: [Icon<'a>; 7],
 }
 
 impl<'a> Icons<'a> {
@@ -51,6 +51,12 @@ impl<'a> Icons<'a> {
             Icon::new(
                 "sunset",
                 include_bytes!("../../../images/assets/tabler-icon-sunset.raw"),
+                24,
+                process,
+            ),
+            Icon::new(
+                "cat",
+                include_bytes!("../../../images/assets/lucide-cat.raw"),
                 24,
                 process,
             ),
