@@ -70,6 +70,8 @@ async fn request(stack: &Stack<'static>, path: &str) -> Result<str256, RequestFa
 
         let content = str256::from(utf8);
 
+        info!("Ok: {}\n{}", path, utf8);
+
         return Ok(content);
     }
 
