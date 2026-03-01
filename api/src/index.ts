@@ -11,8 +11,8 @@ router.get('/message', async (ctx) => {
   //12345678901234567890••
   ctx.body = dedent`
     cat
-    Čau, Maija saule!
-    Mīlu tevi ❤
+    Labrīit ❤
+    Foršu tev dienu!
   `;
 });
 
