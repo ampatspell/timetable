@@ -18,12 +18,17 @@ impl<'a> UI<'a> {
 
     pub fn prepare(&mut self, display: &mut impl Display) {
         display.clear(BACKGROUND_COLOR).ok();
-        self.blocks.on_love();
+        self.blocks.on_start();
         self.draw(display);
     }
 
     fn draw(&mut self, display: &mut impl Display) -> () {
         self.blocks.draw(display);
+    }
+
+    pub fn on_message(&mut self, display: &mut impl Display, block: BlockPayload) {
+        self.blocks.on_message(&block);
+        self.draw(display);
     }
 
     pub fn on_weather(&mut self, display: &mut impl Display, blocks: [BlockPayload; 4]) {

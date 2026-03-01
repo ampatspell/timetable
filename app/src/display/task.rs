@@ -51,6 +51,7 @@ pub async fn display_task(opts: DisplayTaskOptions) {
                 ui.on_weather(&mut display, blocks);
             }
             Visual::Timetable { block } => ui.on_timetable(&mut display, block),
+            Visual::Message { message } => ui.on_message(&mut display, message),
         };
     }
 }
@@ -119,6 +120,9 @@ pub async fn display_timer_task() {
                     lines: timetable,
                 };
                 VISUAL_CHANNEL.send(Visual::Timetable { block }).await;
+            }
+            Network::Message { message } => {
+                VISUAL_CHANNEL.send(Visual::Message { message }).await;
             }
         }
     }

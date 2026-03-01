@@ -55,12 +55,9 @@ impl<'a> Blocks<'a> {
         });
     }
 
-    pub fn on_love(&mut self) {
+    pub fn on_start(&mut self) {
         let block = self.blocks.get_mut(0).unwrap();
-        block.update(
-            str12::from("cat"),
-            [str32::from("Tu esi vislabākā."), str32::from("un kaķis")],
-        );
+        block.update(str12::from("cat"), [str32::from("Čau!"), str32::from("")]);
     }
 
     pub fn on_time(&mut self, time: &str12) {
@@ -81,6 +78,11 @@ impl<'a> Blocks<'a> {
 
     pub fn on_timetable(&mut self, payload: &BlockPayload) {
         let block = self.blocks.get_mut(7).unwrap();
+        block.update(payload.icon, payload.lines);
+    }
+
+    pub fn on_message(&mut self, payload: &BlockPayload) {
+        let block = self.blocks.get_mut(0).unwrap();
         block.update(payload.icon, payload.lines);
     }
 }

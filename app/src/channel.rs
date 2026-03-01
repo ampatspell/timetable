@@ -9,6 +9,7 @@ pub enum Network {
     Time { time: Time },
     Weather { weather: Weather },
     Timetable { timetable: [str32; 2] },
+    Message { message: BlockPayload },
 }
 
 pub static NETWORK_CHANNEL: Channel<CriticalSectionRawMutex, Network, 3> = Channel::new();
@@ -17,6 +18,7 @@ pub enum Visual {
     Time { time: str12 },
     Weather { blocks: [BlockPayload; 4] },
     Timetable { block: BlockPayload },
+    Message { message: BlockPayload },
 }
 
 pub static VISUAL_CHANNEL: Channel<CriticalSectionRawMutex, Visual, 3> = Channel::new();

@@ -28,8 +28,20 @@ export const fetchWeather = async (lat: string, lng: string) => {
   let now = formatDate(createNow());
   let index = daily.time.indexOf(now);
 
+  let formatFloat = (value: number) => {
+    if(value > 0) {
+      return `+${value}`;
+    }
+    if(value < 0) {
+      return `${value}`
+    }
+    return '0';
+  }
+
+  let value = formatFloat(parseFloat(current.temperature));
+
   let temperature = {
-    value: current.temperature,
+    value,
     description: wmoForCode(current.weathercode as number),
   };
 

@@ -1,5 +1,5 @@
 use crate::constants::{WIFI_PASSWORD, WIFI_SSID};
-use crate::network::request::{tick_task, time_task, timetable_task, weather_task};
+use crate::network::request::{message_task, tick_task, time_task, timetable_task, weather_task};
 use defmt::info;
 use embassy_executor::Spawner;
 use embassy_net::{DhcpConfig, Runner, Stack, StackResources};
@@ -107,8 +107,8 @@ pub async fn configure_network<'a>(opts: ConfigureNetworkOptions<'a>) {
     let config = embassy_net::Config::dhcpv4(dhcp_config);
     let resources = {
         // max sockets
-        static CELL: StaticCell<StackResources<16>> = StaticCell::new();
-        CELL.init(StackResources::<16>::new())
+        static CELL: StaticCell<StackResources<24>> = StaticCell::new();
+        CELL.init(StackResources::<24>::new())
     };
 
     let (stack, runner) = embassy_net::new(wifi_interfaces.sta, config, resources, net_seed);
@@ -118,6 +118,7 @@ pub async fn configure_network<'a>(opts: ConfigureNetworkOptions<'a>) {
 
     wait_for_connection(&stack).await;
 
+    spawner.spawn(message_task(stack)).unwrap();
     spawner.spawn(time_task(stack)).unwrap();
     spawner.spawn(weather_task(stack)).unwrap();
     spawner.spawn(timetable_task(stack)).unwrap();

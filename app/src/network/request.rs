@@ -11,6 +11,7 @@ use embassy_time::{Duration, Timer};
 use no_std_strings::{str12, str32, str256};
 use reqwless::client::HttpClient;
 use reqwless::request::Method::GET;
+use ui::payload::BlockPayload;
 
 #[derive(Debug, Clone)]
 struct RequestFailedError;
@@ -78,6 +79,37 @@ async fn request(stack: &Stack<'static>, path: &str) -> Result<str256, RequestFa
     Err(RequestFailedError)
 }
 
+fn parse_message(string: &str) -> BlockPayload {
+    let mut iter = string.split("\n").into_iter();
+    let icon = str12::from(iter.next().unwrap());
+    let lines = [
+        str32::from(iter.next().unwrap()),
+        str32::from(iter.next().unwrap()),
+    ];
+
+    BlockPayload { icon, lines }
+}
+
+#[embassy_executor::task]
+pub async fn message_task(stack: Stack<'static>) {
+    info!("Start time_task");
+    loop {
+        let result = request(&stack, "message").await;
+        match result {
+            Ok(s) => {
+                let body = s.to_str();
+                let message = parse_message(&body);
+                NETWORK_CHANNEL.send(Network::Message { message }).await;
+                Timer::after(Duration::from_secs(60 * 15)).await;
+            }
+            Err(_) => {
+                info!("Failed to fetch message");
+                Timer::after(Duration::from_secs(60)).await;
+            }
+        }
+    }
+}
+
 fn parse_time(string: &str) -> Time {
     let mut iter = string.split("\n").into_iter();
     let mut parse = || iter.next().unwrap().parse::<u8>().unwrap();
@@ -102,12 +134,13 @@ pub async fn time_task(stack: Stack<'static>) {
                 let body = s.to_str();
                 let time = parse_time(&body);
                 NETWORK_CHANNEL.send(Network::Time { time }).await;
+                Timer::after(Duration::from_secs(60)).await;
             }
             Err(_) => {
                 info!("Failed to fetch time");
+                Timer::after(Duration::from_secs(15)).await;
             }
         }
-        Timer::after(Duration::from_secs(60)).await;
     }
 }
 
