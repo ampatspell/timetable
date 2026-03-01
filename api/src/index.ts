@@ -3,10 +3,17 @@ import Router from '@koa/router';
 import { fetchWeather } from './weather.js';
 import { loadTimetable } from './timetable/index.js';
 import dedent from 'dedent';
-import { asString, createNow, formatDiff, formatSeconds, formatTime } from './utils.js';
-import { TZDate, tzOffset } from '@date-fns/tz';
+import { asString, createNow, formatSeconds } from './utils.js';
 
 const router = new Router();
+
+router.get('/message', async (ctx) => {
+  ctx.body = dedent`
+    cat
+    Čau, Maija saule!
+    Mīlu tevi ❤︎
+  `;
+});
 
 router.get('/weather', async (ctx) => {
   // lat=56.95570916409245&lng=24.12422103404933
@@ -83,7 +90,7 @@ router.get('/font', async (ctx) => {
   let numbers = '×0123456789';
   let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';
   let uppercase = lowercase.toUpperCase();
-  let special = '?!():,.°+-';
+  let special = '?!():,.°+-❤︎';
   let array = [...numbers, ...lowercase, ...uppercase, ...special];
   let glyphs = array.join('');
 
