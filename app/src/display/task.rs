@@ -1,5 +1,5 @@
 use crate::{
-    channel::{NETWORK_CHANNEL, Network, VISUAL_CHANNEL, Visual},
+    channel::{NETWORK_CHANNEL, Network, VISUAL_CHANNEL},
     display::create::{CreateDisplayOptions, create_display},
     time::Time,
 };
@@ -8,7 +8,10 @@ use embassy_time::{Duration, Timer};
 use esp_hal::{Blocking, gpio::Output, spi::master::Spi};
 use no_std_strings::{str12, str32};
 use numtoa::NumToA;
-use ui::{payload::BlockPayload, ui::UI};
+use ui::{
+    payload::{BlockPayload, Visual},
+    ui::UI,
+};
 
 pub struct DisplayTaskOptions {
     pub spi: Spi<'static, Blocking>,
@@ -43,16 +46,7 @@ pub async fn display_task(opts: DisplayTaskOptions) {
 
     loop {
         let message = VISUAL_CHANNEL.receive().await;
-        match message {
-            Visual::Time { time } => {
-                ui.on_time(&mut display, time);
-            }
-            Visual::Weather { blocks } => {
-                ui.on_weather(&mut display, blocks);
-            }
-            Visual::Timetable { block } => ui.on_timetable(&mut display, block),
-            Visual::Message { message } => ui.on_message(&mut display, message),
-        };
+        ui.on_message(&mut display, message);
     }
 }
 

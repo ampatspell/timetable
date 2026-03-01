@@ -10,3 +10,10 @@ pub struct BlockPayload {
 pub struct Payload {
     pub blocks: [BlockPayload; 6],
 }
+
+pub enum Visual {
+    Time { time: str12 },
+    Weather { blocks: [BlockPayload; 4] },
+    Timetable { block: BlockPayload },
+    Message { message: BlockPayload },
+}

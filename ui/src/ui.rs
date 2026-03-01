@@ -1,48 +1,79 @@
 use crate::{
     Display,
     components::{BACKGROUND_COLOR, blocks::blocks::Blocks},
-    payload::BlockPayload,
+    payload::Visual,
 };
-use embedded_graphics::prelude::*;
-use no_std_strings::str12;
+use embedded_graphics::{
+    framebuffer::{Framebuffer, buffer_size},
+    pixelcolor::{
+        Rgb565,
+        raw::{LittleEndian, RawU16},
+    },
+    prelude::*,
+};
 
 pub struct UI<'a> {
     blocks: Blocks<'a>,
+    framebuffer:
+        Framebuffer<Rgb565, RawU16, LittleEndian, 240, 280, { buffer_size::<Rgb565>(240, 280) }>,
 }
 
 impl<'a> UI<'a> {
     pub fn new() -> Self {
         let blocks = Blocks::new(Point::new(40, 20));
-        Self { blocks }
+        let framebuffer = Framebuffer::<
+            Rgb565,
+            _,
+            LittleEndian,
+            240,
+            280,
+            { buffer_size::<Rgb565>(240, 280) },
+        >::new();
+
+        Self {
+            blocks,
+            framebuffer,
+        }
     }
 
     pub fn prepare(&mut self, display: &mut impl Display) {
-        display.clear(BACKGROUND_COLOR).ok();
+        self.clear();
         self.blocks.on_start();
         self.draw(display);
     }
 
-    fn draw(&mut self, display: &mut impl Display) -> () {
-        self.blocks.draw(display);
+    fn clear(&mut self) {
+        let framebuffer = &mut self.framebuffer;
+        let size = framebuffer.size();
+        for x in 0..size.width {
+            for y in 0..size.height {
+                framebuffer.set_pixel(Point::new(x as i32, y as i32), BACKGROUND_COLOR);
+            }
+        }
     }
 
-    pub fn on_message(&mut self, display: &mut impl Display, block: BlockPayload) {
-        self.blocks.on_message(&block);
-        self.draw(display);
+    fn draw(&self, display: &mut impl Display) {
+        self.framebuffer.as_image().draw(display).ok();
     }
 
-    pub fn on_weather(&mut self, display: &mut impl Display, blocks: [BlockPayload; 4]) {
-        self.blocks.on_weather(&blocks);
-        self.draw(display);
-    }
+    pub fn on_message(&mut self, display: &mut impl Display, message: Visual) {
+        match message {
+            Visual::Time { time } => {
+                self.blocks.on_time(&time);
+            }
+            Visual::Weather { blocks } => {
+                self.blocks.on_weather(&blocks);
+            }
+            Visual::Timetable { block } => {
+                self.blocks.on_timetable(&block);
+            }
+            Visual::Message { message } => {
+                self.blocks.on_message(&message);
+            }
+        };
 
-    pub fn on_timetable(&mut self, display: &mut impl Display, block: BlockPayload) {
-        self.blocks.on_timetable(&block);
-        self.draw(display);
-    }
-
-    pub fn on_time(&mut self, display: &mut impl Display, string: str12) {
-        self.blocks.on_time(&string);
+        self.clear();
+        self.blocks.draw(&mut self.framebuffer);
         self.draw(display);
     }
 }
