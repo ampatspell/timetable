@@ -4,7 +4,10 @@ use static_cell::StaticCell;
 
 use crate::{
     Display,
-    components::alpha::{BlendInBackground, ImageAlpha, ProcessPixel},
+    components::{
+        BACKGROUND_COLOR,
+        alpha::{BlendInBackground, ImageAlpha, ProcessPixel},
+    },
 };
 
 pub struct Icons<'a> {
@@ -15,7 +18,7 @@ impl<'a> Icons<'a> {
     pub fn new() -> Self {
         let process = {
             static CELL: StaticCell<BlendInBackground> = StaticCell::new();
-            CELL.init(BlendInBackground::new())
+            CELL.init(BlendInBackground::new(BACKGROUND_COLOR))
         };
         let map = [
             Icon::new(

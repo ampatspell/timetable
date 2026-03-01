@@ -8,7 +8,7 @@ use embedded_graphics::{
     primitives::Rectangle,
 };
 
-use crate::components::{BACKGROUND_COLOR, utils::blend};
+use crate::components::utils::blend;
 
 pub struct ImageAlpha<'a> {
     width: u32,
@@ -129,9 +129,9 @@ pub struct BlendInBackground {
 }
 
 impl BlendInBackground {
-    pub fn new() -> Self {
+    pub fn new(color: Rgb565) -> Self {
         Self {
-            background: Rgb888::from(BACKGROUND_COLOR),
+            background: Rgb888::from(color),
         }
     }
 }

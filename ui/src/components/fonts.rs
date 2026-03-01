@@ -1,11 +1,19 @@
 use core::ops::Add;
 
-use embedded_graphics::{image::Image, prelude::*, primitives::Rectangle};
+use embedded_graphics::{
+    image::Image,
+    pixelcolor::Rgb565,
+    prelude::*,
+    primitives::{PrimitiveStyle, PrimitiveStyleBuilder, Rectangle, StyledDrawable},
+};
 use static_cell::StaticCell;
 
 use crate::{
     Display,
-    components::alpha::{BlendInBackground, ImageAlpha},
+    components::{
+        BACKGROUND_COLOR,
+        alpha::{BlendInBackground, ImageAlpha},
+    },
 };
 
 pub struct Fonts<'a> {
@@ -34,20 +42,23 @@ pub struct Font<'a> {
     pub size: Size,
     image: ImageAlpha<'a>,
     mapping: &'a [&'a str],
+    style: PrimitiveStyle<Rgb565>,
 }
 
 impl<'a> Font<'a> {
     pub fn new(data: &'a [u8], size: Size, mapping: &'a [&'a str]) -> Self {
+        let background = BACKGROUND_COLOR;
         let process = {
             static CELL: StaticCell<BlendInBackground> = StaticCell::new();
-            CELL.init(BlendInBackground::new())
+            CELL.init(BlendInBackground::new(background))
         };
         let image = ImageAlpha::new(data, size.width as u32, process);
-
+        let style = PrimitiveStyleBuilder::new().fill_color(background).build();
         Self {
             size,
             image,
             mapping,
+            style,
         }
     }
 
@@ -86,9 +97,32 @@ impl<'a> Font<'a> {
             let glyph = self.glyph_for_character(c);
             point = match glyph {
                 Some(glyph) => self.draw_glyph_at(display, glyph, point),
-                None => point.add(Point::new(self.size.width as i32, 0)),
+                None => {
+                    let rect = Rectangle::new(point, self.size);
+                    rect.draw_styled(&self.style, display).ok();
+                    point.add(Point::new(self.size.width as i32, 0))
+                }
             };
         });
+
+        point
+    }
+
+    pub fn draw_string_at_clear(
+        &self,
+        display: &mut impl Display,
+        string: &str,
+        position: Point,
+        max_chars: u32,
+    ) -> Point {
+        let point = self.draw_string_at(display, string, position);
+
+        let len = string.len() as u32;
+        if len < max_chars as u32 {
+            let width = (max_chars - len) * self.size.width as u32;
+            let rect = Rectangle::new(point, Size::new(width, self.size.height));
+            rect.draw_styled(&self.style, display).ok();
+        }
 
         point
     }

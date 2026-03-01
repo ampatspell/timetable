@@ -8,6 +8,7 @@ import { asString, createNow, formatSeconds } from './utils.js';
 const router = new Router();
 
 router.get('/message', async (ctx) => {
+  //12345678901234567890••
   ctx.body = dedent`
     cat
     Čau, Maija saule!

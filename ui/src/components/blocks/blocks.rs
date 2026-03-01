@@ -43,11 +43,10 @@ impl<'a> Blocks<'a> {
 
     pub fn draw(&mut self, display: &mut impl Display) {
         let mut y: i32 = 0;
-        // TODO: force = false and clear before drawing
-        let mut force = true;
+        let mut force = false;
         self.blocks.iter_mut().for_each(|block| {
             let origin = self.origin.add(Point::new(0, y as i32));
-            let result = block.draw_at(display, &self.context, origin, false);
+            let result = block.draw_at(display, &self.context, origin, force);
             y = y + result.height;
             if result.needs_layout {
                 force = true;
@@ -57,7 +56,13 @@ impl<'a> Blocks<'a> {
 
     pub fn on_start(&mut self) {
         let block = self.blocks.get_mut(0).unwrap();
-        block.update(str12::from("cat"), [str32::from("Čau!"), str32::from("")]);
+        block.update(
+            str12::from("cat"),
+            [
+                str32::from("Čau!"),
+                str32::from("123456789012345678901234567890"),
+            ],
+        );
     }
 
     pub fn on_time(&mut self, time: &str12) {

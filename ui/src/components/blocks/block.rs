@@ -53,14 +53,14 @@ impl Block {
                     .icons
                     .draw_at(display, self.icon.to_str(), origin.add(Point::new(0, 0)));
 
-                let mut point = origin.add(Point::new(35, 1));
+                let mut point = origin.add(Point::new(35, 0));
                 let font = context.fonts.for_size(20).unwrap();
 
                 self.lines
                     .iter()
                     .filter(|line| line.len() > 0)
                     .for_each(|line| {
-                        font.draw_string_at(display, &line, point);
+                        font.draw_string_at_clear(display, &line, point, 26);
                         point = point.add(Point::new(0, font.size.height as i32));
                         u_height += font.size.height;
                     });
@@ -74,7 +74,7 @@ impl Block {
             // info!("Draw {}", self.icon.as_str());
 
             return BlockDrawResult {
-                height: height,
+                height,
                 needs_layout,
             };
         }
