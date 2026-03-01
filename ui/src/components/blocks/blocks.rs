@@ -46,7 +46,7 @@ impl<'a> Blocks<'a> {
         self.blocks.iter_mut().for_each(|block| {
             let origin = self.origin.add(Point::new(0, y as i32));
             let height = block.draw_at(display, &self.context, origin);
-            y = y + height;
+            y = y + height + 1;
         });
     }
 

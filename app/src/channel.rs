@@ -1,5 +1,5 @@
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, channel::Channel};
-use no_std_strings::{str12, str32};
+use no_std_strings::str32;
 use ui::payload::{BlockPayload, Visual};
 
 use crate::{network::data::Weather, time::Time};

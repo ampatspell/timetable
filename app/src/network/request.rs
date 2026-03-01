@@ -214,7 +214,7 @@ pub async fn timetable_task(stack: Stack<'static>) {
             }
             Err(_) => {
                 info!("Failed to fetch timetable");
-                let timetable = [str32::from("Salūza"), str32::new()];
+                let timetable = [str32::from("Uj, nezinu"), str32::new()];
                 NETWORK_CHANNEL.send(Network::Timetable { timetable }).await;
             }
         }
