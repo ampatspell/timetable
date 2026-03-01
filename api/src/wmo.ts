@@ -1,40 +1,38 @@
-const mapping: Record<string, [string, string, string]> = {
-  "0": ["Clear", "Clear sky.", "01"],
-  "1": ["MainlyClear", "Mainly clear sky.", "02"],
-  "2": ["PartlyCloudy", "Partly cloudy sky.", "02"],
-  "3": ["Overcast", "Overcast sky.", "03"],
-  "45": ["Fog", "Foggy.", "50"],
-  "48": ["Fog", "Depositing rime fog.", "50"],
-  "51": ["Drizzle", "Light drizzle.", "10"],
-  "53": ["Drizzle", "Moderate drizzle.", "09"],
-  "55": ["Drizzle", "Dense drizzle.", "09"],
-  "56": ["FreezingDrizzle", "Light freezing drizzle.", "09"],
-  "57": ["FreezingDrizzle", "Dense freezing drizzle.", "09"],
-  "61": ["Rain", "Slight rain.", "10"],
-  "63": ["Rain", "Moderate rain.", "09"],
-  "65": ["Rain", "Heavy rain.", "09"],
-  "66": ["FreezingRain", "Light freezing rain.", "09"],
-  "67": ["FreezingRain", "Heavy freezing rain.", "09"],
-  "71": ["Snow", "Slight snow fall.", "13"],
-  "73": ["Snow", "Moderate snow fall.", "13"],
-  "75": ["Snow", "Heavy snow fall.", "13"],
-  "77": ["Snow", "Snow grains falling.", "13"],
-  "80": ["Rain", "Slight rain showers.", "10"],
-  "81": ["Rain", "Moderate rain showers.", "09"],
-  "82": ["Rain", "Violent rain showers.", "09"],
-  "85": ["Snow", "Slight snow showers.", "13"],
-  "86": ["Snow", "Heavy snow showers.", "13"],
-  "95": ["Thunderstorm", "Thunderstorm.", "07"],
-  "96": ["Thunderstorm", "Thunderstorm with slight hail.", "07"],
-  "99": ["Thunderstorm", "Thunderstorm with heavy hail.", "07"],
+const mapping: Record<string, [string, string]> = {
+  "0": [ "Skaidrs", "01"],
+  "1": [ "Apmēram skaidrs", "02"],
+  "2": [ "Bik mākoņains", "02"],
+  "3": [ "Apmācies", "03"],
+  "45": [ "Miglains", "50"],
+  "48": [ "Sarma, migla", "50"],
+  "51": [ "Smidzina", "10"],
+  "53": [ "Mēreni smidzina", "09"],
+  "55": [ "Ļoti smidzina", "09"],
+  "56": [ "Bik salstoši smidzina", "09"],
+  "57": [ "Ļoti salstoši smidzina", "09"],
+  "61": [ "Bik lietus", "10"],
+  "63": [ "Lietus", "09"],
+  "65": [ "Riktīgs lietus", "09"],
+  "66": [ "Bik salst lietus", "09"],
+  "67": [ "Pamatīgs salst lietus", "09"],
+  "71": [ "Bik snieg", "13"],
+  "73": [ "Snieg", "13"],
+  "75": [ "Riktīgi snieg", "13"],
+  "77": [ "Sniega graudi", "13"],
+  "80": [ "Bik lietusgāzes", "10"],
+  "81": [ "Lietusgāzes", "09"],
+  "82": [ "Pamatīgas lietusgāzes", "09"],
+  "85": [ "Bik sniegs līst", "13"],
+  "86": [ "Sniegs līst", "13"],
+  "95": [ "Negaiss", "07"],
+  "96": [ "Negaiss, bik krusa", "07"],
+  "99": [ "Negaiss, krusa", "07"],
 };
 
 export const wmoForCode = (code: number) => {
   const key = String(code) as keyof typeof mapping;
   let arr = mapping[key];
   if(arr) {
-    const short = arr[0]!;
-    const long = arr[1]!;
-    return { short, long };
+    return arr[0]!;
   }
 }
