@@ -11,7 +11,7 @@ router.get('/message', async (ctx) => {
   ctx.body = dedent`
     cat
     Čau, Maija saule!
-    Mīlu tevi ❤︎
+    Mīlu tevi ❤
   `;
 });
 
@@ -90,7 +90,7 @@ router.get('/font', async (ctx) => {
   let numbers = '×0123456789';
   let lowercase = 'abcdefghijklmnopqrstuvwxyzāčēģīķļņšūž';
   let uppercase = lowercase.toUpperCase();
-  let special = '?!():,.°+-';
+  let special = '?!():,.°+-❤';
   let array = [...numbers, ...lowercase, ...uppercase, ...special];
   let glyphs = array.join('');
 
