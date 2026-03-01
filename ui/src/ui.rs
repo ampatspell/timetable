@@ -15,19 +15,19 @@ use embedded_graphics::{
 pub struct UI<'a> {
     blocks: Blocks<'a>,
     framebuffer:
-        Framebuffer<Rgb565, RawU16, LittleEndian, 240, 280, { buffer_size::<Rgb565>(240, 280) }>,
+        Framebuffer<Rgb565, RawU16, LittleEndian, 300, 240, { buffer_size::<Rgb565>(300, 240) }>,
 }
 
 impl<'a> UI<'a> {
     pub fn new() -> Self {
-        let blocks = Blocks::new(Point::new(40, 20));
+        let blocks = Blocks::new(Point::new(40, 17));
         let framebuffer = Framebuffer::<
             Rgb565,
             _,
             LittleEndian,
+            300,
             240,
-            280,
-            { buffer_size::<Rgb565>(240, 280) },
+            { buffer_size::<Rgb565>(300, 240) },
         >::new();
 
         Self {
