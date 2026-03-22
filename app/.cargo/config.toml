@@ -3,6 +3,7 @@ runner = "probe-rs run --chip=esp32s3 --preverify --always-print-stacktrace --no
 
 [env]
 DEFMT_LOG="info"
+# DEFMT_LOG=off cargo run --release
 
 [build]
 rustflags = [
